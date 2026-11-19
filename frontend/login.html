@@ -205,14 +205,17 @@
       });
     }
 
-    // Quick Demo Credentials Fill
+    // Quick Demo Credentials Fill & Auto-Sign In
     const demoBtn = document.getElementById("demo-fill-btn");
     if (demoBtn) {
       demoBtn.addEventListener("click", () => {
         emailInput.value = "arun@example.com";
         pwdInput.value = "Farmer@2026";
         clearErrors();
-        showToast("Filled demo farmer credentials", "info", 1800);
+        showToast("Demo credentials loaded! Signing in...", "info", 1500);
+        setTimeout(() => {
+          submitBtn.click();
+        }, 350);
       });
     }
 

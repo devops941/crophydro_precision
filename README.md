@@ -76,6 +76,11 @@ copy .env.example .env     # Windows
 # Apply migrations & seed initial crops and methods
 python manage.py migrate
 python manage.py import_crops
+python manage.py create_demo_farmer
+
+# Default Demo Farmer Account:
+# Email:    arun@example.com
+# Password: Farmer@2026
 
 # Create an administrator account (optional, for /admin access)
 python manage.py createsuperuser
