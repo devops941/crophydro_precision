@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — Crop Hydro-Precision</title>
+  <meta name="description" content="Create your Crop Hydro-Precision account to calculate precision irrigation schedules.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <!-- Google Fonts: Poppins & Noto Sans Tamil -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container navbar-container">
+      <a href="index.html" class="navbar-brand">
+        <img src="assets/logo.svg" alt="Crop Hydro-Precision Logo" class="navbar-logo" width="36" height="36">
+        <span data-i18n="brand_name">Crop Hydro-Precision</span>
+      </a>
+
+      <div class="navbar-actions">
+        <!-- Language Switcher Toggle -->
+        <button id="lang-toggle-btn" class="btn btn-ghost btn-sm" aria-label="Toggle language">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span class="lang-btn-text">தமிழ்</span>
+        </button>
+
+        <!-- Theme Switcher Toggle -->
+        <button id="theme-toggle-btn" class="btn btn-icon" aria-label="Toggle dark mode" data-i18n-title="theme_toggle_title">
+          <svg class="icon-sun hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="auth-page-container">
+      <!-- Form Side -->
+      <div class="auth-form-side">
+        <div style="margin-bottom: var(--space-6);">
+          <h1 style="font-size: var(--font-size-2xl); margin-bottom: var(--space-2);" data-i18n="auth_register_title">Create Farmer Account</h1>
+          <p style="font-size: var(--font-size-sm); color: var(--text-secondary);" data-i18n="auth_register_subtitle">
+            Start calculating precision irrigation and optimizing water demand for your crops.
+          </p>
+        </div>
+
+        <form id="register-form" novalidate>
+          <!-- Full Name -->
+          <div class="form-group">
+            <label for="reg-fullname" class="form-label" data-i18n="auth_fullname_label">Full Name</label>
+            <input type="text" id="reg-fullname" class="form-control" autocomplete="name" required placeholder="e.g. Arun Kumar" data-i18n-placeholder="auth_fullname_placeholder">
+            <span class="form-error" id="fullname-error"></span>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="reg-email" class="form-label" data-i18n="auth_email_label">Email Address</label>
+            <input type="email" id="reg-email" class="form-control" autocomplete="email" required placeholder="arun@example.com" data-i18n-placeholder="auth_email_placeholder">
+            <span class="form-error" id="email-error"></span>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label for="reg-password" class="form-label" data-i18n="auth_password_label">Password</label>
+            <div class="input-group">
+              <input type="password" id="reg-password" class="form-control" autocomplete="new-password" required placeholder="Enter secure password" data-i18n-placeholder="auth_password_placeholder">
+              <button type="button" class="btn btn-secondary toggle-pwd" data-target="reg-password" style="border-top-left-radius: 0; border-bottom-left-radius: 0; padding: 0 var(--space-3);" aria-label="Toggle password visibility">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
+            <div class="form-hint" data-i18n="auth_password_hint">Must be at least 8 characters and pass standard security rules.</div>
+            <span class="form-error" id="password-error"></span>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="form-group">
+            <label for="reg-password2" class="form-label" data-i18n="auth_confirm_password_label">Confirm Password</label>
+            <div class="input-group">
+              <input type="password" id="reg-password2" class="form-control" autocomplete="new-password" required placeholder="Re-enter password" data-i18n-placeholder="auth_confirm_password_placeholder">
+              <button type="button" class="btn btn-secondary toggle-pwd" data-target="reg-password2" style="border-top-left-radius: 0; border-bottom-left-radius: 0; padding: 0 var(--space-3);" aria-label="Toggle password visibility">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
+            <span class="form-error" id="password2-error"></span>
+          </div>
+
+          <!-- Submit Button -->
+          <div style="margin-top: var(--space-6); margin-bottom: var(--space-6);">
+            <button type="submit" id="reg-submit-btn" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center;">
+              <span data-i18n="auth_register_btn">Create Account</span>
+            </button>
+          </div>
+
+          <!-- General Error Slot -->
+          <div id="general-error" class="form-error" style="text-align: center; margin-bottom: var(--space-4);"></div>
+
+          <!-- Login Link -->
+          <div style="text-align: center; font-size: var(--font-size-sm); color: var(--text-secondary);">
+            <span data-i18n="auth_have_account">Already have an account?</span>
+            <a href="login.html" style="font-weight: 600; margin-left: var(--space-1);" data-i18n="auth_sign_in_link">Sign in here</a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Right Side Visual / Illustration Panel (Desktop) -->
+      <div class="auth-side-panel">
+        <div>
+          <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-8);">
+            <img src="assets/logo.svg" alt="Logo" width="40" height="40">
+            <span style="font-size: var(--font-size-xl); font-weight: 700;" data-i18n="brand_name">Crop Hydro-Precision</span>
+          </div>
+          <h2 style="color: #ffffff; font-size: var(--font-size-3xl); line-height: 1.2; margin-bottom: var(--space-4);" data-i18n="auth_side_heading">
+            Science-Driven Water Management
+          </h2>
+          <p style="color: #e0f2fe; font-size: var(--font-size-base); max-width: 460px; line-height: 1.6;" data-i18n="auth_side_desc">
+            Join farmers and agricultural researchers across Tamil Nadu using FAO-56 standards to preserve groundwater and boost crop yield.
+          </p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+          <div style="background: rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: var(--space-4); display: flex; align-items: center; gap: var(--space-3);">
+            <div style="background: #16a34a; width: 36px; height: 36px; border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white;">✓</div>
+            <div>
+              <div style="color: #ffffff; font-weight: 600; font-size: var(--font-size-sm);">Instant FAO-56 Water Budget</div>
+              <div style="color: #bae6fd; font-size: var(--font-size-xs);">Calculates Net & Gross mm, Total Litres, and Pump Hours</div>
+            </div>
+          </div>
+          <div style="background: rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: var(--space-4); display: flex; align-items: center; gap: var(--space-3);">
+            <div style="background: #0284c7; width: 36px; height: 36px; border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white;">✓</div>
+            <div>
+              <div style="color: #ffffff; font-weight: 600; font-size: var(--font-size-sm);">Seasonal Kc Progression Curves</div>
+              <div style="color: #bae6fd; font-size: var(--font-size-xs);">Visual growth stage tracking from sowing to harvest</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size: var(--font-size-xs); color: #bae6fd;">
+          Food and Agriculture Organization (FAO-56) Compliant
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Application Script -->
+  <script type="module">
+    import { api } from "./js/api.js";
+    import { setAuth, redirectIfLoggedIn } from "./js/auth.js";
+    import { initI18n } from "./js/i18n.js";
+    import { initTheme, showToast, setButtonLoading } from "./js/ui.js";
+
+    // Immediate route guard: if already logged in, redirect
+    if (redirectIfLoggedIn()) {
+      // Browser redirected
+    }
+
+    initI18n();
+    initTheme();
+
+    // Setup password toggle buttons
+    document.querySelectorAll(".toggle-pwd").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (!input) return;
+        const isPassword = input.type === "password";
+        input.type = isPassword ? "text" : "password";
+        btn.innerHTML = isPassword
+          ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`
+          : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+      });
+    });
+
+    const form = document.getElementById("register-form");
+    const nameInput = document.getElementById("reg-fullname");
+    const emailInput = document.getElementById("reg-email");
+    const pwdInput = document.getElementById("reg-password");
+    const pwd2Input = document.getElementById("reg-password2");
+    const submitBtn = document.getElementById("reg-submit-btn");
+
+    const nameError = document.getElementById("fullname-error");
+    const emailError = document.getElementById("email-error");
+    const pwdError = document.getElementById("password-error");
+    const pwd2Error = document.getElementById("password2-error");
+    const generalError = document.getElementById("general-error");
+
+    function clearErrors() {
+      nameError.textContent = "";
+      emailError.textContent = "";
+      pwdError.textContent = "";
+      pwd2Error.textContent = "";
+      generalError.textContent = "";
+
+      nameInput.classList.remove("has-error");
+      emailInput.classList.remove("has-error");
+      pwdInput.classList.remove("has-error");
+      pwd2Input.classList.remove("has-error");
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      clearErrors();
+
+      const fullName = nameInput.value.trim();
+      const email = emailInput.value.trim().toLowerCase();
+      const password = pwdInput.value;
+      const password2 = pwd2Input.value;
+
+      let hasError = false;
+
+      if (!fullName) {
+        nameError.textContent = "Full name is required.";
+        nameInput.classList.add("has-error");
+        hasError = true;
+      }
+
+      if (!email) {
+        emailError.textContent = "Email is required.";
+        emailInput.classList.add("has-error");
+        hasError = true;
+      } else if (!email.includes("@") || !email.includes(".")) {
+        emailError.textContent = "Please enter a valid email address.";
+        emailInput.classList.add("has-error");
+        hasError = true;
+      }
+
+      if (!password) {
+        pwdError.textContent = "Password is required.";
+        pwdInput.classList.add("has-error");
+        hasError = true;
+      } else if (password.length < 8) {
+        pwdError.textContent = "Password must be at least 8 characters.";
+        pwdInput.classList.add("has-error");
+        hasError = true;
+      }
+
+      if (!password2) {
+        pwd2Error.textContent = "Please confirm your password.";
+        pwd2Input.classList.add("has-error");
+        hasError = true;
+      } else if (password !== password2) {
+        pwd2Error.textContent = "Passwords do not match.";
+        pwd2Input.classList.add("has-error");
+        hasError = true;
+      }
+
+      if (hasError) return;
+
+      setButtonLoading(submitBtn, true);
+
+      try {
+        const data = await api("/auth/register/", {
+          method: "POST",
+          body: {
+            full_name: fullName,
+            email: email,
+            password: password,
+            password2: password2,
+          },
+          auth: false,
+        });
+
+        // Store tokens & user profile
+        setAuth({ access: data.access, refresh: data.refresh }, data.user);
+        showToast("Account created successfully! Welcome to Crop Hydro-Precision.", "success", 2500);
+
+        setTimeout(() => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const nextUrl = urlParams.get("next") || "dashboard.html";
+          window.location.href = nextUrl;
+        }, 500);
+
+      } catch (err) {
+        setButtonLoading(submitBtn, false);
+
+        if (err.status === 409) {
+          emailError.textContent = err.message || "An account with this email already exists.";
+          emailInput.classList.add("has-error");
+          showToast(err.message || "Email already registered. Try logging in.", "error");
+          return;
+        }
+
+        if (err.details) {
+          if (err.details.full_name) {
+            nameError.textContent = Array.isArray(err.details.full_name) ? err.details.full_name.join(" ") : err.details.full_name;
+            nameInput.classList.add("has-error");
+          }
+          if (err.details.email) {
+            emailError.textContent = Array.isArray(err.details.email) ? err.details.email.join(" ") : err.details.email;
+            emailInput.classList.add("has-error");
+          }
+          if (err.details.password) {
+            pwdError.textContent = Array.isArray(err.details.password) ? err.details.password.join(" ") : err.details.password;
+            pwdInput.classList.add("has-error");
+          }
+          if (err.details.password2) {
+            pwd2Error.textContent = Array.isArray(err.details.password2) ? err.details.password2.join(" ") : err.details.password2;
+            pwd2Input.classList.add("has-error");
+          }
+          if (err.details.non_field_errors) {
+            generalError.textContent = Array.isArray(err.details.non_field_errors)
+              ? err.details.non_field_errors.join(" ")
+              : err.details.non_field_errors;
+          }
+        } else {
+          generalError.textContent = err.message || "Registration failed. Please check your inputs.";
+        }
+      }
+    });
+  </script>
+</body>
+</html>

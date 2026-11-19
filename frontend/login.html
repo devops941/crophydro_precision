@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Crop Hydro-Precision</title>
+  <meta name="description" content="Sign in to your Crop Hydro-Precision account to calculate and view your irrigation records.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <!-- Google Fonts: Poppins & Noto Sans Tamil -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container navbar-container">
+      <a href="index.html" class="navbar-brand">
+        <img src="assets/logo.svg" alt="Crop Hydro-Precision Logo" class="navbar-logo" width="36" height="36">
+        <span data-i18n="brand_name">Crop Hydro-Precision</span>
+      </a>
+
+      <div class="navbar-actions">
+        <!-- Language Switcher Toggle -->
+        <button id="lang-toggle-btn" class="btn btn-ghost btn-sm" aria-label="Toggle language">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span class="lang-btn-text">தமிழ்</span>
+        </button>
+
+        <!-- Theme Switcher Toggle -->
+        <button id="theme-toggle-btn" class="btn btn-icon" aria-label="Toggle dark mode" data-i18n-title="theme_toggle_title">
+          <svg class="icon-sun hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="auth-page-container">
+      <!-- Form Side -->
+      <div class="auth-form-side">
+        <div style="margin-bottom: var(--space-8);">
+          <h1 style="font-size: var(--font-size-2xl); margin-bottom: var(--space-2);" data-i18n="auth_login_title">Welcome Back</h1>
+          <p style="font-size: var(--font-size-sm); color: var(--text-secondary);" data-i18n="auth_login_subtitle">
+            Sign in to access your farm calculations, seasonal Kc curves, and pump schedules.
+          </p>
+        </div>
+
+        <form id="login-form" novalidate>
+          <!-- Email Input -->
+          <div class="form-group">
+            <label for="login-email" class="form-label" data-i18n="auth_email_label">Email Address</label>
+            <input type="email" id="login-email" class="form-control" autocomplete="email" required placeholder="arun@example.com" data-i18n-placeholder="auth_email_placeholder">
+            <span class="form-error" id="email-error"></span>
+          </div>
+
+          <!-- Password Input with Toggle -->
+          <div class="form-group">
+            <label for="login-password" class="form-label" data-i18n="auth_password_label">Password</label>
+            <div class="input-group">
+              <input type="password" id="login-password" class="form-control" autocomplete="current-password" required placeholder="Enter password" data-i18n-placeholder="auth_password_placeholder">
+              <button type="button" class="btn btn-secondary" id="toggle-password-btn" style="border-top-left-radius: 0; border-bottom-left-radius: 0; padding: 0 var(--space-3);" aria-label="Toggle password visibility">
+                <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
+            <span class="form-error" id="password-error"></span>
+          </div>
+
+          <!-- Submit Button -->
+          <div style="margin-top: var(--space-6); margin-bottom: var(--space-6);">
+            <button type="submit" id="login-submit-btn" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center;">
+              <span data-i18n="auth_login_btn">Sign In</span>
+            </button>
+          </div>
+
+          <!-- General Error Slot -->
+          <div id="general-error" class="form-error" style="text-align: center; margin-bottom: var(--space-4);"></div>
+
+          <!-- Registration Link -->
+          <div style="text-align: center; font-size: var(--font-size-sm); color: var(--text-secondary);">
+            <span data-i18n="auth_no_account">Don't have an account?</span>
+            <a href="register.html" style="font-weight: 600; margin-left: var(--space-1);" data-i18n="auth_register_link">Register for free</a>
+          </div>
+        </form>
+      </div>
+
+      <!-- Right Side Visual / Illustration Panel (Desktop) -->
+      <div class="auth-side-panel">
+        <div>
+          <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-8);">
+            <img src="assets/logo.svg" alt="Logo" width="40" height="40">
+            <span style="font-size: var(--font-size-xl); font-weight: 700;" data-i18n="brand_name">Crop Hydro-Precision</span>
+          </div>
+          <h2 style="color: #ffffff; font-size: var(--font-size-3xl); line-height: 1.2; margin-bottom: var(--space-4);" data-i18n="auth_side_heading">
+            Science-Driven Water Management
+          </h2>
+          <p style="color: #e0f2fe; font-size: var(--font-size-base); max-width: 460px; line-height: 1.6;" data-i18n="auth_side_desc">
+            Join farmers and agricultural researchers across Tamil Nadu using FAO-56 standards to preserve groundwater and boost crop yield.
+          </p>
+        </div>
+
+        <!-- Graphic Illustration of Precision Gauge & Drops -->
+        <div style="background: rgba(255, 255, 255, 0.08); border-radius: var(--radius-xl); padding: var(--space-6); border: 1px solid rgba(255, 255, 255, 0.15);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+            <div style="font-size: var(--font-size-sm); color: #bae6fd;">FAO-56 Irrigation Engine</div>
+            <span class="badge" style="background: #22c55e; color: #ffffff;">Active</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); text-align: center;">
+            <div style="background: rgba(0,0,0,0.2); padding: var(--space-3); border-radius: var(--radius-md);">
+              <div style="font-size: var(--font-size-xs); color: #94a3b8;">Ra</div>
+              <div style="font-weight: 700; color: #ffffff; font-size: var(--font-size-base);">31.64</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.2); padding: var(--space-3); border-radius: var(--radius-md);">
+              <div style="font-size: var(--font-size-xs); color: #94a3b8;">ET₀</div>
+              <div style="font-weight: 700; color: #38bdf8; font-size: var(--font-size-base);">4.71</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.2); padding: var(--space-3); border-radius: var(--radius-md);">
+              <div style="font-size: var(--font-size-xs); color: #94a3b8;">Kc</div>
+              <div style="font-weight: 700; color: #4ade80; font-size: var(--font-size-base);">0.81</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size: var(--font-size-xs); color: #bae6fd;">
+          Food and Agriculture Organization (FAO-56) Compliant
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Application Script -->
+  <script type="module">
+    import { api } from "./js/api.js";
+    import { setAuth, redirectIfLoggedIn } from "./js/auth.js";
+    import { initI18n } from "./js/i18n.js";
+    import { initTheme, showToast, setButtonLoading } from "./js/ui.js";
+
+    // Immediate route guard: if already logged in, redirect
+    if (redirectIfLoggedIn()) {
+      // Browser redirected
+    }
+
+    initI18n();
+    initTheme();
+
+    // Password Toggle Functionality
+    const togglePwdBtn = document.getElementById("toggle-password-btn");
+    const pwdInput = document.getElementById("login-password");
+    if (togglePwdBtn && pwdInput) {
+      togglePwdBtn.addEventListener("click", () => {
+        const isPassword = pwdInput.type === "password";
+        pwdInput.type = isPassword ? "text" : "password";
+        togglePwdBtn.innerHTML = isPassword
+          ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`
+          : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+      });
+    }
+
+    // Form Submission
+    const form = document.getElementById("login-form");
+    const emailInput = document.getElementById("login-email");
+    const submitBtn = document.getElementById("login-submit-btn");
+    const emailError = document.getElementById("email-error");
+    const pwdError = document.getElementById("password-error");
+    const generalError = document.getElementById("general-error");
+
+    function clearErrors() {
+      emailError.textContent = "";
+      pwdError.textContent = "";
+      generalError.textContent = "";
+      emailInput.classList.remove("has-error");
+      pwdInput.classList.remove("has-error");
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      clearErrors();
+
+      const email = emailInput.value.trim().toLowerCase();
+      const password = pwdInput.value;
+
+      // Client-side quick checks
+      let hasClientError = false;
+      if (!email) {
+        emailError.textContent = "Email is required.";
+        emailInput.classList.add("has-error");
+        hasClientError = true;
+      }
+      if (!password) {
+        pwdError.textContent = "Password is required.";
+        pwdInput.classList.add("has-error");
+        hasClientError = true;
+      }
+
+      if (hasClientError) return;
+
+      setButtonLoading(submitBtn, true);
+
+      try {
+        const data = await api("/auth/login/", {
+          method: "POST",
+          body: { email, password },
+          auth: false,
+        });
+
+        // Store tokens & user
+        setAuth({ access: data.access, refresh: data.refresh }, data.user);
+        showToast("Signed in successfully!", "success", 2000);
+
+        // Redirect to requested next page or dashboard
+        const urlParams = new URLSearchParams(window.location.search);
+        const nextUrl = urlParams.get("next") || "dashboard.html";
+        setTimeout(() => {
+          window.location.href = nextUrl;
+        }, 500);
+
+      } catch (err) {
+        setButtonLoading(submitBtn, false);
+
+        if (err.details) {
+          if (err.details.email) {
+            emailError.textContent = Array.isArray(err.details.email) ? err.details.email.join(" ") : err.details.email;
+            emailInput.classList.add("has-error");
+          }
+          if (err.details.password) {
+            pwdError.textContent = Array.isArray(err.details.password) ? err.details.password.join(" ") : err.details.password;
+            pwdInput.classList.add("has-error");
+          }
+          if (err.details.non_field_errors) {
+            generalError.textContent = Array.isArray(err.details.non_field_errors)
+              ? err.details.non_field_errors.join(" ")
+              : err.details.non_field_errors;
+          }
+        } else {
+          generalError.textContent = err.message || "Invalid email or password.";
+        }
+      }
+    });
+  </script>
+</body>
+</html>

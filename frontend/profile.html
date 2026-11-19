@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Profile — Crop Hydro-Precision</title>
+  <meta name="description" content="Manage your Crop Hydro-Precision account settings, name, and password.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <!-- Google Fonts: Poppins & Noto Sans Tamil -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container navbar-container">
+      <a href="index.html" class="navbar-brand">
+        <img src="assets/logo.svg" alt="Crop Hydro-Precision Logo" class="navbar-logo" width="36" height="36">
+        <span data-i18n="brand_name">Crop Hydro-Precision</span>
+      </a>
+
+      <nav class="navbar-links" aria-label="Main navigation">
+        <a href="index.html" class="nav-link" data-i18n="nav_home">Home</a>
+        <a href="dashboard.html" class="nav-link" data-i18n="nav_dashboard">Calculator</a>
+        <a href="history.html" class="nav-link" data-i18n="nav_history">History</a>
+        <a href="about.html" class="nav-link" data-i18n="nav_about">Methodology</a>
+      </nav>
+
+      <div class="navbar-actions">
+        <!-- Language Switcher Toggle -->
+        <button id="lang-toggle-btn" class="btn btn-ghost btn-sm" aria-label="Toggle language">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span class="lang-btn-text">தமிழ்</span>
+        </button>
+
+        <!-- Theme Switcher Toggle -->
+        <button id="theme-toggle-btn" class="btn btn-icon" aria-label="Toggle dark mode" data-i18n-title="theme_toggle_title">
+          <svg class="icon-sun hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+
+        <a href="profile.html" class="user-avatar" id="nav-user-initials" title="User profile">U</a>
+        <button id="nav-logout-btn" class="btn btn-ghost btn-sm" data-i18n="nav_logout">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main style="padding: var(--space-8) 0 var(--space-16);">
+    <div class="container container-sm">
+      <!-- Profile Header Banner -->
+      <div class="card card-elevated" style="margin-bottom: var(--space-8); display: flex; align-items: center; gap: var(--space-6); flex-wrap: wrap;">
+        <div class="user-avatar" id="profile-avatar-initials" style="width: 72px; height: 72px; font-size: var(--font-size-2xl);">U</div>
+        <div>
+          <h1 id="profile-header-name" style="font-size: var(--font-size-2xl); margin-bottom: var(--space-1);">Loading...</h1>
+          <div id="profile-header-email" style="font-size: var(--font-size-sm); color: var(--text-muted); margin-bottom: var(--space-2);">farmer@example.com</div>
+          <span class="badge badge-stage-development">Verified Farmer Account</span>
+        </div>
+      </div>
+
+      <!-- Section 1: Personal Details Form -->
+      <div class="card" style="margin-bottom: var(--space-8);">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title" data-i18n="profile_account_info">Account Information</h2>
+            <div class="card-subtitle" data-i18n="profile_subtitle">Manage your account details and password</div>
+          </div>
+        </div>
+
+        <form id="profile-name-form" novalidate>
+          <div class="form-group">
+            <label for="profile-fullname" class="form-label" data-i18n="auth_fullname_label">Full Name</label>
+            <input type="text" id="profile-fullname" class="form-control" required placeholder="Arun Kumar">
+            <span class="form-error" id="profile-name-error"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="profile-email" class="form-label" data-i18n="auth_email_label">Email Address</label>
+            <input type="email" id="profile-email" class="form-control" disabled style="background-color: var(--bg-surface-muted); opacity: 0.8; cursor: not-allowed;">
+            <div class="form-hint" data-i18n="profile_email_readonly">Email address cannot be changed.</div>
+          </div>
+
+          <div class="form-group" style="padding-top: var(--space-2);">
+            <div style="font-size: var(--font-size-xs); color: var(--text-muted); margin-bottom: var(--space-1);" data-i18n="profile_member_since">Member Since</div>
+            <div id="profile-member-since" style="font-weight: 600; font-size: var(--font-size-sm); color: var(--text-main);">—</div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; margin-top: var(--space-6);">
+            <button type="submit" id="profile-name-save-btn" class="btn btn-primary">
+              <span data-i18n="profile_save_btn">Save Profile</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Section 2: Change Password Form -->
+      <div class="card" style="margin-bottom: var(--space-8);">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title" data-i18n="profile_change_pwd_title">Change Password</h2>
+            <div class="card-subtitle">Ensure your account uses a strong, unique password.</div>
+          </div>
+        </div>
+
+        <form id="profile-pwd-form" novalidate>
+          <div class="form-group">
+            <label for="profile-old-pwd" class="form-label" data-i18n="profile_old_password_label">Current Password</label>
+            <input type="password" id="profile-old-pwd" class="form-control" autocomplete="current-password" required placeholder="Enter current password">
+            <span class="form-error" id="profile-old-pwd-error"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="profile-new-pwd" class="form-label" data-i18n="profile_new_password_label">New Password</label>
+            <input type="password" id="profile-new-pwd" class="form-control" autocomplete="new-password" required placeholder="Enter new password">
+            <div class="form-hint" data-i18n="auth_password_hint">Must be at least 8 characters and pass standard security rules.</div>
+            <span class="form-error" id="profile-new-pwd-error"></span>
+          </div>
+
+          <div id="profile-pwd-general-error" class="form-error" style="margin-bottom: var(--space-3);"></div>
+
+          <div style="display: flex; justify-content: flex-end; margin-top: var(--space-6);">
+            <button type="submit" id="profile-pwd-save-btn" class="btn btn-secondary">
+              <span data-i18n="profile_update_pwd_btn">Update Password</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Section 3: Session Security / Logout -->
+      <div class="card" style="border-color: rgba(220, 38, 38, 0.2);">
+        <div class="card-header" style="border-bottom-color: rgba(220, 38, 38, 0.1);">
+          <div>
+            <h2 class="card-title" style="color: var(--color-danger-600);" data-i18n="profile_danger_zone">Session & Security</h2>
+            <div class="card-subtitle" data-i18n="profile_logout_desc">Sign out of your active session on this device.</div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: gap: var(--space-4);">
+          <p style="font-size: var(--font-size-sm); margin-bottom: 0;">
+            Logging out clears your security tokens and prevents unauthorized access to your farm records.
+          </p>
+          <button type="button" id="profile-page-logout-btn" class="btn btn-danger">
+            <span data-i18n="profile_logout_btn">Log Out of Account</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container" style="text-align: center;">
+      <span style="font-size: var(--font-size-xs); color: var(--text-muted);" data-i18n="footer_rights">All rights reserved. Built with pure FAO-56 algorithms.</span>
+    </div>
+  </footer>
+
+  <!-- Application Script -->
+  <script type="module">
+    import { initI18n } from "./js/i18n.js";
+    import { initTheme, initNavbar } from "./js/ui.js";
+    import { initProfilePage } from "./js/profile.js";
+
+    initI18n();
+    initTheme();
+    initNavbar();
+    initProfilePage();
+  </script>
+</body>
+</html>
