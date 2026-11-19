@@ -78,16 +78,39 @@
         </a>
       </div>
 
-      <!-- 30-Day Trend Chart Card -->
-      <div class="card card-elevated" style="margin-bottom: var(--space-8);">
-        <div class="card-header">
+      <!-- 30-Day Trend Chart Card with Fluid Watery Waves -->
+      <div class="card card-elevated" style="margin-bottom: var(--space-8); position: relative; overflow: hidden;">
+        <div class="card-header" style="position: relative; z-index: 2;">
           <div>
-            <h2 class="card-title" data-i18n="history_chart_title">Daily Water Usage Trend (Last 30 Days)</h2>
+            <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+              <h2 class="card-title" data-i18n="history_chart_title">Daily Water Usage Trend (Last 30 Days)</h2>
+            </div>
             <div class="card-subtitle">Aggregated daily litres calculated across all your crops.</div>
           </div>
+          <span class="badge" style="background: rgba(2, 132, 199, 0.12); color: #0284c7; border: 1px solid rgba(2, 132, 199, 0.3); font-weight: 600;">
+            <span class="pulse-dot" style="background-color: #0284c7; box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.7);"></span>
+            <span>Hydro-Wave Stream • நீர் அலை ஓட்டம்</span>
+          </span>
         </div>
-        <div style="height: 260px; position: relative;">
+
+        <div style="height: 280px; position: relative; z-index: 2;">
           <canvas id="history-trend-chart"></canvas>
+        </div>
+
+        <!-- Animated Parallax Water Waves Graphic Background -->
+        <div class="water-waves-wrapper" aria-hidden="true">
+          <svg class="water-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+              <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax">
+              <use href="#gentle-wave" x="48" y="0" fill="rgba(2, 132, 199, 0.08)" />
+              <use href="#gentle-wave" x="48" y="3" fill="rgba(14, 165, 233, 0.12)" />
+              <use href="#gentle-wave" x="48" y="5" fill="rgba(56, 189, 248, 0.16)" />
+              <use href="#gentle-wave" x="48" y="7" fill="rgba(2, 132, 199, 0.22)" />
+            </g>
+          </svg>
         </div>
       </div>
 

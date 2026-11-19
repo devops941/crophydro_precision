@@ -715,3 +715,62 @@
   color: #bae6fd;
   opacity: 0.9;
 }
+
+/* --------------------------------------------------------------------------
+   3. Calculation History Watery Waves Graphic & Animation
+   -------------------------------------------------------------------------- */
+.water-waves-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 95px;
+  pointer-events: none;
+  overflow: hidden;
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+  z-index: 1;
+}
+
+.water-waves {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin-bottom: -7px;
+  min-height: 80px;
+  max-height: 120px;
+}
+
+.parallax > use {
+  animation: moveWaves 22s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
+}
+
+.parallax > use:nth-child(1) {
+  animation-delay: -2s;
+  animation-duration: 7s;
+}
+
+.parallax > use:nth-child(2) {
+  animation-delay: -3s;
+  animation-duration: 11s;
+}
+
+.parallax > use:nth-child(3) {
+  animation-delay: -4s;
+  animation-duration: 15s;
+}
+
+.parallax > use:nth-child(4) {
+  animation-delay: -5s;
+  animation-duration: 22s;
+}
+
+@keyframes moveWaves {
+  0% { transform: translate3d(-90px, 0, 0); }
+  100% { transform: translate3d(85px, 0, 0); }
+}
+
+[data-theme="dark"] .parallax > use:nth-child(1) { fill: rgba(2, 132, 199, 0.08); }
+[data-theme="dark"] .parallax > use:nth-child(2) { fill: rgba(14, 165, 233, 0.12); }
+[data-theme="dark"] .parallax > use:nth-child(3) { fill: rgba(56, 189, 248, 0.16); }
+[data-theme="dark"] .parallax > use:nth-child(4) { fill: rgba(2, 132, 199, 0.22); }
