@@ -323,6 +323,12 @@ class HistoryListTests(TestCase):
         r = self.client.get("/api/history/?page=2")
         self.assertEqual(len(r.data["results"]), 2)
 
+    def test_invalid_page_param_defaults_to_page_1(self):
+        self._post_calc()
+        r = self.client.get("/api/history/?page=invalid_param")
+        self.assertEqual(r.status_code, status.HTTP_200_OK)
+        self.assertEqual(r.data["page"], 1)
+
     def test_requires_auth_401(self):
         r = APIClient().get("/api/history/")
         self.assertEqual(r.status_code, status.HTTP_401_UNAUTHORIZED)

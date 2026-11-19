@@ -109,7 +109,10 @@ def calculate_view(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def history_list(request):
-    page = int(request.query_params.get("page", 1))
+    try:
+        page = max(1, int(request.query_params.get("page", 1)))
+    except (ValueError, TypeError):
+        page = 1
     page_size = 10
     qs = Calculation.objects.filter(user=request.user).select_related("crop", "method")
     total = qs.count()
