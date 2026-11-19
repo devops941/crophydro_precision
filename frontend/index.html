@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crop Hydro-Precision — Crop Water Demand & Irrigation Calculator</title>
+  <meta name="description" content="Calculate crop water demand (ETc) and irrigation requirements using FAO-56 scientific methods for farmers and students in Tamil Nadu.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <!-- Google Fonts: Poppins & Noto Sans Tamil -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <!-- =========================================================================
+       Navigation Bar
+       ========================================================================= -->
+  <header class="navbar">
+    <div class="container navbar-container">
+      <!-- Brand Logo -->
+      <a href="index.html" class="navbar-brand">
+        <img src="assets/logo.svg" alt="Crop Hydro-Precision Logo" class="navbar-logo" width="36" height="36">
+        <span data-i18n="brand_name">Crop Hydro-Precision</span>
+      </a>
+
+      <!-- Desktop Links -->
+      <nav class="navbar-links" aria-label="Main navigation">
+        <a href="index.html" class="nav-link active" data-i18n="nav_home">Home</a>
+        <a href="dashboard.html" class="nav-link nav-auth-only hidden" data-i18n="nav_dashboard">Calculator</a>
+        <a href="history.html" class="nav-link nav-auth-only hidden" data-i18n="nav_history">History</a>
+        <a href="about.html" class="nav-link" data-i18n="nav_about">Methodology</a>
+      </nav>
+
+      <!-- Right Controls: Language, Theme, Auth -->
+      <div class="navbar-actions">
+        <!-- Language Switcher Toggle -->
+        <button id="lang-toggle-btn" class="btn btn-ghost btn-sm" aria-label="Toggle language between English and Tamil" title="Switch language">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span class="lang-btn-text">தமிழ்</span>
+        </button>
+
+        <!-- Theme Switcher Toggle -->
+        <button id="theme-toggle-btn" class="btn btn-icon" aria-label="Toggle dark mode" data-i18n-title="theme_toggle_title">
+          <svg class="icon-sun hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <!-- Guest Links -->
+        <div class="nav-guest-only" style="display: flex; gap: var(--space-2);">
+          <a href="login.html" class="btn btn-ghost btn-sm" data-i18n="nav_login">Login</a>
+          <a href="register.html" class="btn btn-primary btn-sm" data-i18n="nav_register">Get Started</a>
+        </div>
+
+        <!-- Authenticated User Menu -->
+        <div class="nav-auth-only hidden" style="display: flex; align-items: center; gap: var(--space-3);">
+          <a href="profile.html" class="user-avatar" id="nav-user-initials" title="User profile">U</a>
+          <button id="nav-logout-btn" class="btn btn-ghost btn-sm" data-i18n="nav_logout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- =========================================================================
+         Hero Section
+         ========================================================================= -->
+    <section class="hero-section">
+      <div class="container hero-grid">
+        <div class="hero-text-content">
+          <div class="hero-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span data-i18n="hero_badge">FAO-56 Certified Standard</span>
+          </div>
+          <h1 class="hero-title">
+            <span data-i18n="hero_title_1">Precision Irrigation &</span><br>
+            <span class="text-gradient" data-i18n="hero_title_2">Crop Water Demand</span>
+          </h1>
+          <p class="hero-subtext" data-i18n="hero_subtext">
+            Empowering farmers and students across Tamil Nadu with scientifically accurate daily water requirements, crop coefficient curves, and pump schedules.
+          </p>
+          <div class="hero-ctas">
+            <a href="dashboard.html" class="btn btn-primary btn-lg" data-i18n="cta_calculate_now">
+              Calculate Water Demand
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="about.html" class="btn btn-secondary btn-lg" data-i18n="cta_learn_more">Explore Methodology</a>
+          </div>
+
+          <div class="hero-stats">
+            <div>
+              <div class="hero-stat-value">3+</div>
+              <div class="hero-stat-label" data-i18n="stat_crops">Supported Crops</div>
+            </div>
+            <div>
+              <div class="hero-stat-value">100%</div>
+              <div class="hero-stat-label" data-i18n="stat_precision">FAO-56 Compliant</div>
+            </div>
+            <div>
+              <div class="hero-stat-value">30-50%</div>
+              <div class="hero-stat-label" data-i18n="stat_savings">Water Optimization</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Illustrated Graphic (Inline SVG) -->
+        <div class="hero-visual-card">
+          <!-- Floating Metrics -->
+          <div class="floating-metric top-right">
+            <div class="user-avatar" style="background: var(--color-water-600); width: 32px; height: 32px;">ET₀</div>
+            <div>
+              <div style="font-size: var(--font-size-xs); color: var(--text-muted);" data-i18n="metric_et0_preview">Reference ET₀</div>
+              <div style="font-weight: 700; color: var(--color-water-600);">4.71 mm/day</div>
+            </div>
+          </div>
+
+          <div class="floating-metric bottom-left">
+            <div class="user-avatar" style="background: var(--color-primary-600); width: 32px; height: 32px;">Kc</div>
+            <div>
+              <div style="font-size: var(--font-size-xs); color: var(--text-muted);" data-i18n="metric_savings_preview">Water Saving Potential</div>
+              <div style="font-weight: 700; color: var(--color-primary-600);">33% Drip vs Flood</div>
+            </div>
+          </div>
+
+          <div class="hero-svg-container">
+            <svg viewBox="0 0 460 340" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
+              <!-- Sky & Sun -->
+              <circle cx="390" cy="65" r="40" fill="#fef08a" opacity="0.6"/>
+              <circle cx="390" cy="65" r="26" fill="#facc15"/>
+              <!-- Sunrays -->
+              <path d="M390 25V10M390 120V105M345 65H330M450 65H435M358 33L347 22M433 108L422 97M358 97L347 108M433 22L422 33" stroke="#eab308" stroke-width="2.5" stroke-linecap="round"/>
+
+              <!-- Rolling Hills / Field Background -->
+              <path d="M0 240C90 215 160 230 250 215C340 200 400 220 460 210V340H0V240Z" fill="#dcfce7" opacity="0.7"/>
+              <!-- Crop Rows Contour Lines -->
+              <path d="M0 265C110 245 230 255 460 235" stroke="#86efac" stroke-width="2" stroke-dasharray="6 6"/>
+              <path d="M0 295C120 275 240 285 460 265" stroke="#4ade80" stroke-width="2" stroke-dasharray="6 6"/>
+              <path d="M0 325C130 305 250 315 460 295" stroke="#22c55e" stroke-width="2"/>
+
+              <!-- Drip Irrigation Pipe Graphic -->
+              <path d="M40 315H420" stroke="#0284c7" stroke-width="4" stroke-linecap="round"/>
+              <!-- Emitter water droplets -->
+              <circle cx="100" cy="315" r="3" fill="#38bdf8"/>
+              <circle cx="180" cy="315" r="3" fill="#38bdf8"/>
+              <circle cx="260" cy="315" r="3" fill="#38bdf8"/>
+              <circle cx="340" cy="315" r="3" fill="#38bdf8"/>
+
+              <!-- Central Healthy Crop (Maize / Rice Stalk) -->
+              <path d="M220 315V170" stroke="#15803d" stroke-width="6" stroke-linecap="round"/>
+              <!-- Leaves Left -->
+              <path d="M220 270C180 270 160 230 150 200C175 225 200 245 220 250" fill="#16a34a"/>
+              <path d="M220 220C190 220 170 185 165 160C185 180 205 198 220 202" fill="#22c55e"/>
+              <!-- Leaves Right -->
+              <path d="M220 255C260 255 280 215 290 185C265 210 240 230 220 235" fill="#16a34a"/>
+              <path d="M220 205C250 205 270 170 275 145C255 165 235 183 220 187" fill="#22c55e"/>
+              <!-- Top Tassel / Ear of Corn -->
+              <path d="M220 170C215 155 210 140 205 130M220 170C225 155 230 140 235 130M220 170V125" stroke="#ca8a04" stroke-width="3" stroke-linecap="round"/>
+
+              <!-- Stylized Water Droplet with Precision Crosshair -->
+              <g transform="translate(60, 80)">
+                <path d="M40 10C40 10 18 36 18 52C18 64.15 27.85 74 40 74C52.15 74 62 64.15 62 52C62 36 40 10 40 10Z" fill="url(#waterDropGrad)"/>
+                <circle cx="40" cy="52" r="14" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3 3"/>
+                <line x1="40" y1="34" x2="40" y2="70" stroke="#ffffff" stroke-width="1.5"/>
+                <line x1="22" y1="52" x2="58" y2="52" stroke="#ffffff" stroke-width="1.5"/>
+              </g>
+
+              <defs>
+                <linearGradient id="waterDropGrad" x1="18" y1="10" x2="62" y2="74" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#38bdf8"/>
+                  <stop offset="100%" stop-color="#0284c7"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         How It Works Section (4 Steps)
+         ========================================================================= -->
+    <section class="section">
+      <div class="container">
+        <div style="text-align: center; max-width: 680px; margin: 0 auto;">
+          <h2 data-i18n="how_it_works_title">How Precision Calculation Works</h2>
+          <p data-i18n="how_it_works_subtitle">Four scientific steps based on FAO-56 equations to calculate exact crop water needs.</p>
+        </div>
+
+        <div class="steps-grid">
+          <!-- Step 1 -->
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h3 class="step-title" data-i18n="step1_title">Weather Inputs</h3>
+            <p class="step-desc" data-i18n="step1_desc">Enter daily maximum/minimum temperature, rainfall, and latitude to determine atmospheric evaporative demand.</p>
+          </div>
+          <!-- Step 2 -->
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h3 class="step-title" data-i18n="step2_title">Reference ET₀</h3>
+            <p class="step-desc" data-i18n="step2_desc">The Hargreaves-Samani equation computes extraterrestrial radiation (Ra) and reference evapotranspiration.</p>
+          </div>
+          <!-- Step 3 -->
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h3 class="step-title" data-i18n="step3_title">Crop Coefficient (Kc)</h3>
+            <p class="step-desc" data-i18n="step3_desc">Dynamic piecewise interpolation calculates exact Kc according to the crop's precise growth stage day.</p>
+          </div>
+          <!-- Step 4 -->
+          <div class="step-card">
+            <div class="step-number">4</div>
+            <h3 class="step-title" data-i18n="step4_title">Irrigation Schedule</h3>
+            <p class="step-desc" data-i18n="step4_desc">Accounting for irrigation efficiency and effective rain delivers net mm, gross volume in litres, and pump run hours.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         Live Supported Crops Strip (Loaded from GET /api/crops/)
+         ========================================================================= -->
+    <section class="supported-crops-section">
+      <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: var(--space-4);">
+          <div>
+            <h2 data-i18n="crops_title">Tamil Nadu Regional Crops</h2>
+            <p data-i18n="crops_subtitle">Pre-configured with standard FAO-56 Kc values and growth stage durations.</p>
+          </div>
+          <a href="dashboard.html" class="btn btn-secondary btn-sm" data-i18n="cta_calculate_now">Calculate for your crop &rarr;</a>
+        </div>
+
+        <div id="crops-container" class="crops-scroll-grid" role="region" aria-live="polite">
+          <!-- Dynamic skeleton cards while loading -->
+          <div class="crop-card skeleton-box skeleton"></div>
+          <div class="crop-card skeleton-box skeleton"></div>
+          <div class="crop-card skeleton-box skeleton"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         Key Features Grid
+         ========================================================================= -->
+    <section class="section">
+      <div class="container">
+        <div style="text-align: center; max-width: 680px; margin: 0 auto;">
+          <h2 data-i18n="features_title">Engineered for Tamil Nadu Agriculture</h2>
+          <p data-i18n="features_subtitle">Built to deliver field-ready, mathematically rigorous recommendations directly to your phone or computer.</p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Feature 1 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <h3 class="card-title" data-i18n="feat1_title">FAO-56 Compliant Maths</h3>
+            <p data-i18n="feat1_desc">No rough guesses. Pure FAO-56 scientific equations for extraterrestrial radiation and evapotranspiration.</p>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+            </div>
+            <h3 class="card-title" data-i18n="feat2_title">Litres & Pump Hours</h3>
+            <p data-i18n="feat2_desc">Instantly converts millimeters of water demand into total litres and required pump operating duration.</p>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <h3 class="card-title" data-i18n="feat3_title">Full Seasonal Kc Curve</h3>
+            <p data-i18n="feat3_desc">Interactive visual charts showing your crop's current stage and whole-season crop coefficient progression.</p>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper soil">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-3 3"/></svg>
+            </div>
+            <h3 class="card-title" data-i18n="feat4_title">Calculation History</h3>
+            <p data-i18n="feat4_desc">Track and review all previous farm calculations with historical water trend analysis and exportable records.</p>
+          </div>
+
+          <!-- Feature 5 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <h3 class="card-title" data-i18n="feat5_title">Bilingual (English / தமிழ்)</h3>
+            <p data-i18n="feat5_desc">Full native Tamil language translation for farmers and agricultural students across Tamil Nadu.</p>
+          </div>
+
+          <!-- Feature 6 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            </div>
+            <h3 class="card-title" data-i18n="feat6_title">Responsive & Mobile First</h3>
+            <p data-i18n="feat6_desc">Fast, mobile-first design optimized for low-bandwidth rural connections with instant calculations.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         FAO-56 Scientific Credibility Section
+         ========================================================================= -->
+    <section class="section" style="padding-top: 0;">
+      <div class="container">
+        <div class="fao-banner">
+          <div>
+            <h3 data-i18n="fao_banner_title">Rooted in Global Agricultural Standards</h3>
+            <p data-i18n="fao_banner_desc">
+              Crop Hydro-Precision strictly implements the methodologies defined in FAO Irrigation and Drainage Paper No. 56 by Allen, Pereira, Raes, and Smith (1998).
+            </p>
+          </div>
+          <div class="fao-badge-list">
+            <div class="fao-badge-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span data-i18n="fao_check1">Hargreaves-Samani temperature-radiation formulation</span>
+            </div>
+            <div class="fao-badge-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span data-i18n="fao_check2">Piecewise 4-stage crop coefficient interpolation</span>
+            </div>
+            <div class="fao-badge-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span data-i18n="fao_check3">Effective precipitation fraction accounting</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================================
+       Footer
+       ========================================================================= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div>
+          <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3);">
+            <img src="assets/logo.svg" alt="Logo" width="28" height="28">
+            <strong style="font-size: var(--font-size-base);" data-i18n="brand_name">Crop Hydro-Precision</strong>
+          </div>
+          <p style="font-size: var(--font-size-sm); max-width: 360px;" data-i18n="footer_desc">
+            A scientific irrigation requirement calculator empowering sustainable water stewardship in Tamil Nadu.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="font-size: var(--font-size-sm); margin-bottom: var(--space-3);" data-i18n="footer_links_title">Quick Links</h4>
+          <ul style="display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--font-size-sm);">
+            <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+            <li><a href="dashboard.html" data-i18n="nav_dashboard">Calculator</a></li>
+            <li><a href="history.html" data-i18n="nav_history">History</a></li>
+            <li><a href="about.html" data-i18n="nav_about">Methodology</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 style="font-size: var(--font-size-sm); margin-bottom: var(--space-3);" data-i18n="footer_fao_title">Reference</h4>
+          <p style="font-size: var(--font-size-xs); color: var(--text-muted); line-height: 1.6;">
+            FAO Irrigation and Drainage Paper 56:<br>
+            <em>Crop Evapotranspiration — Guidelines for computing crop water requirements</em>.<br>
+            Rome, Italy.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span data-i18n="footer_rights">All rights reserved. Built with pure FAO-56 algorithms.</span>
+        <span>Tamil Nadu, India</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       Application Script (ES Module)
+       ========================================================================= -->
+  <script type="module">
+    import { api } from "./js/api.js";
+    import { initI18n, getCurrentLang } from "./js/i18n.js";
+    import { initTheme, initNavbar } from "./js/ui.js";
+
+    // Initialize layout systems
+    initI18n();
+    initTheme();
+    initNavbar();
+
+    // Load Live Supported Crops from GET /api/crops/
+    async function loadSupportedCrops() {
+      const container = document.getElementById("crops-container");
+      if (!container) return;
+
+      try {
+        const response = await api("/crops/", { auth: false });
+        const crops = response.crops || [];
+
+        if (crops.length === 0) {
+          container.innerHTML = `<p class="text-muted">No crops currently active.</p>`;
+          return;
+        }
+
+        const isTamil = getCurrentLang() === "ta";
+
+        container.innerHTML = crops.map((crop) => {
+          const displayName = isTamil ? crop.name_ta : crop.name_en;
+          const secondaryName = isTamil ? crop.name_en : crop.name_ta;
+          const daysText = isTamil ? "நாட்கள்" : "days";
+          const durText = isTamil ? "முழு காலம்" : "Total Duration";
+          const initText = isTamil ? "தொடக்கப் பருவம்" : "Initial Stage";
+          const peakText = isTamil ? "உச்ச Kc" : "Peak Kc";
+
+          return `
+            <div class="crop-card">
+              <div class="crop-card-header">
+                <div>
+                  <div class="crop-name">${displayName}</div>
+                  <div class="crop-tamil-name">${secondaryName}</div>
+                </div>
+                <span class="badge badge-stage-development">Kc: ${crop.kc_ini} - ${crop.kc_mid}</span>
+              </div>
+              <div class="crop-meta-row">
+                <span>${durText}</span>
+                <strong>${crop.total_days} ${daysText}</strong>
+              </div>
+              <div class="crop-meta-row">
+                <span>${initText}</span>
+                <span>${crop.days_initial} ${daysText}</span>
+              </div>
+              <div class="crop-meta-row">
+                <span>${peakText}</span>
+                <strong>${crop.kc_mid}</strong>
+              </div>
+            </div>
+          `;
+        }).join("");
+      } catch (err) {
+        // Fallback display if backend is not currently running
+        container.innerHTML = `
+          <div class="crop-card" style="grid-column: 1 / -1; text-align: center; padding: var(--space-8);">
+            <div style="font-weight: 600; margin-bottom: var(--space-2);">Rice, Maize & Pearl Millet</div>
+            <p style="font-size: var(--font-size-sm); color: var(--text-muted); margin-bottom: var(--space-4);">
+              Connect to the Django backend to load live crop coefficients and real-time parameters.
+            </p>
+            <span class="badge badge-stage-development">Backend at 127.0.0.1:8000</span>
+          </div>
+        `;
+      }
+    }
+
+    loadSupportedCrops();
+
+    // Re-render crop names if user toggles language
+    document.getElementById("lang-toggle-btn")?.addEventListener("click", () => {
+      setTimeout(loadSupportedCrops, 50);
+    });
+  </script>
+</body>
+</html>

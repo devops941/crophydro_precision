@@ -1,0 +1,4 @@
+crop,crop_tamil,kc_ini,kc_mid,kc_end,days_initial,days_dev,days_mid,days_late,total_days
+rice,நெல்,1.05,1.20,0.90,30,30,60,30,150
+maize,மக்காச்சோளம்,0.30,1.20,0.60,20,35,40,30,125
+millet,கம்பு,0.30,1.00,0.30,15,25,40,25,105
