@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Methodology & FAO-56 Science — Crop Hydro-Precision</title>
+  <meta name="description" content="Scientific principles, mathematical formulations, and FAO-56 standard equations implemented in Crop Hydro-Precision.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <!-- Google Fonts: Poppins & Noto Sans Tamil -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container navbar-container">
+      <a href="index.html" class="navbar-brand">
+        <img src="assets/logo.svg" alt="Crop Hydro-Precision Logo" class="navbar-logo" width="36" height="36">
+        <span data-i18n="brand_name">Crop Hydro-Precision</span>
+      </a>
+
+      <nav class="navbar-links" aria-label="Main navigation">
+        <a href="index.html" class="nav-link" data-i18n="nav_home">Home</a>
+        <a href="dashboard.html" class="nav-link nav-auth-only hidden" data-i18n="nav_dashboard">Calculator</a>
+        <a href="history.html" class="nav-link nav-auth-only hidden" data-i18n="nav_history">History</a>
+        <a href="about.html" class="nav-link active" data-i18n="nav_about">Methodology</a>
+      </nav>
+
+      <div class="navbar-actions">
+        <!-- Language Switcher Toggle -->
+        <button id="lang-toggle-btn" class="btn btn-ghost btn-sm" aria-label="Toggle language">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span class="lang-btn-text">தமிழ்</span>
+        </button>
+
+        <!-- Theme Switcher Toggle -->
+        <button id="theme-toggle-btn" class="btn btn-icon" aria-label="Toggle dark mode" data-i18n-title="theme_toggle_title">
+          <svg class="icon-sun hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+
+        <div class="nav-guest-only" style="display: flex; gap: var(--space-2);">
+          <a href="login.html" class="btn btn-ghost btn-sm" data-i18n="nav_login">Login</a>
+          <a href="register.html" class="btn btn-primary btn-sm" data-i18n="nav_register">Get Started</a>
+        </div>
+
+        <div class="nav-auth-only hidden" style="display: flex; align-items: center; gap: var(--space-3);">
+          <a href="profile.html" class="user-avatar" id="nav-user-initials" title="User profile">U</a>
+          <button id="nav-logout-btn" class="btn btn-ghost btn-sm" data-i18n="nav_logout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main style="padding: var(--space-12) 0 var(--space-16);">
+    <div class="container container-sm">
+
+      <!-- Hero Header -->
+      <div style="text-align: center; margin-bottom: var(--space-12);">
+        <div class="hero-badge" style="margin-bottom: var(--space-3);">
+          FAO-56 Scientific Documentation
+        </div>
+        <h1 style="font-size: clamp(2rem, 4vw, 2.75rem); margin-bottom: var(--space-4);" data-i18n="about_hero_title">
+          The Science of Crop Water Precision
+        </h1>
+        <p style="font-size: var(--font-size-lg); color: var(--text-secondary); line-height: 1.6;" data-i18n="about_hero_desc">
+          Crop Hydro-Precision strictly implements the globally recognized FAO Irrigation and Drainage Paper 56 standards to guide sustainable water use.
+        </p>
+      </div>
+
+      <!-- Section 1: Extraterrestrial Radiation & ET0 -->
+      <article class="card" style="margin-bottom: var(--space-8);">
+        <div class="card-header">
+          <h2 class="card-title" data-i18n="about_et0_title">1. Reference Evapotranspiration (ET₀)</h2>
+        </div>
+        <p data-i18n="about_et0_desc">
+          Reference evapotranspiration represents the rate of water loss from a standardized well-watered reference grass surface under given weather conditions. We use the Hargreaves-Samani method (1985), which calculates ET₀ using daily temperature extrema and extraterrestrial radiation (Ra), making it ideal for locations without solar radiation sensors.
+        </p>
+
+        <div style="background: var(--bg-surface-muted); padding: var(--space-4); border-radius: var(--radius-md); margin-top: var(--space-4);">
+          <div style="font-size: var(--font-size-xs); color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: var(--space-2);">FAO-56 Mathematical Equations:</div>
+          <p style="font-family: monospace; font-size: var(--font-size-sm); color: var(--text-main); margin-bottom: var(--space-2);">
+            dr = 1 + 0.033 × cos(2πJ / 365)<br>
+            δ = 0.409 × sin(2πJ / 365 − 1.39)<br>
+            ωs = arccos(−tan φ × tan δ)<br>
+            Ra = (24 × 60 / π) × Gsc × dr × [ωs sin φ sin δ + cos φ cos δ sin ωs] (MJ/m²/day)<br>
+            Ra (mm/day) = 0.408 × Ra
+          </p>
+          <div style="font-weight: 700; color: var(--color-water-600); font-family: monospace; font-size: var(--font-size-base); padding-top: var(--space-2); border-top: 1px dashed var(--border-default);">
+            ET₀ = 0.0023 × Ra_mm × (Tmean + 17.8) × √(Tmax − Tmin)
+          </div>
+        </div>
+      </article>
+
+      <!-- Section 2: Crop Coefficient Kc -->
+      <article class="card" style="margin-bottom: var(--space-8);">
+        <div class="card-header">
+          <h2 class="card-title" data-i18n="about_kc_title">2. The Crop Coefficient (Kc)</h2>
+        </div>
+        <p data-i18n="about_kc_desc">
+          The crop coefficient integrates crop characteristics and average effects of soil evaporation. In FAO-56, the seasonal growth cycle is partitioned into four distinct phases: Initial, Crop Development, Mid-Season, and Late Season. Crop Hydro-Precision uses piecewise linear interpolation to determine the exact daily Kc value.
+        </p>
+
+        <div style="background: var(--bg-surface-muted); padding: var(--space-4); border-radius: var(--radius-md); margin-top: var(--space-4);">
+          <div style="font-size: var(--font-size-xs); color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: var(--space-2);">4-Stage Growth Boundaries:</div>
+          <ul style="font-size: var(--font-size-sm); color: var(--text-secondary); display: flex; flex-direction: column; gap: var(--space-2);">
+            <li><strong>Initial:</strong> Constant Kc = Kc_ini until end of initial days.</li>
+            <li><strong>Development:</strong> Linear increase from Kc_ini to Kc_mid: <code>Kc = Kc_ini + [(day − end_ini) / dev_days] × (Kc_mid − Kc_ini)</code></li>
+            <li><strong>Mid-Season:</strong> Plateau at maximum canopy cover: <code>Kc = Kc_mid</code></li>
+            <li><strong>Late-Season:</strong> Linear decline toward maturity: <code>Kc = Kc_mid + [(day − end_mid) / late_days] × (Kc_end − Kc_mid)</code></li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Section 3: Crop Water Demand ETc -->
+      <article class="card" style="margin-bottom: var(--space-8);">
+        <div class="card-header">
+          <h2 class="card-title" data-i18n="about_etc_title">3. Crop Evapotranspiration (ETc)</h2>
+        </div>
+        <p data-i18n="about_etc_desc">
+          Crop water demand is calculated as ETc = Kc × ET₀. This represents the actual depth of water in millimeters transpired by the crop and evaporated from the soil surface.
+        </p>
+        <div style="background: var(--bg-surface-muted); padding: var(--space-4); border-radius: var(--radius-md); font-family: monospace; font-size: var(--font-size-base); font-weight: 700; color: var(--color-primary-700);">
+          ETc = Kc × ET₀ (mm/day)
+        </div>
+      </article>
+
+      <!-- Section 4: Water Balance -->
+      <article class="card" style="margin-bottom: var(--space-8);">
+        <div class="card-header">
+          <h2 class="card-title" data-i18n="about_irrigation_title">4. Net & Gross Irrigation Requirement</h2>
+        </div>
+        <p data-i18n="about_irrigation_desc">
+          Accounting for natural rainfall, Effective Rainfall is determined as 80% of total precipitation. Net irrigation requirement is the net water depth needed: Net = max(ETc - Effective Rain, 0). Gross irrigation accounts for system distribution efficiency (e.g. 90% for Drip, 75% for Sprinkler, 60% for Surface Flood).
+        </p>
+        <div style="background: var(--bg-surface-muted); padding: var(--space-4); border-radius: var(--radius-md); margin-top: var(--space-4); font-family: monospace; font-size: var(--font-size-sm); color: var(--text-main);">
+          Effective Rain = 0.8 × Rain_mm<br>
+          Net Irrigation = max(ETc − Effective Rain, 0)<br>
+          Gross Irrigation = Net Irrigation / Efficiency
+        </div>
+      </article>
+
+      <!-- Section 5: Volumetric & Pump Schedule -->
+      <article class="card" style="margin-bottom: var(--space-8);">
+        <div class="card-header">
+          <h2 class="card-title" data-i18n="about_volume_title">5. Volumetric & Pump Operation Schedule</h2>
+        </div>
+        <p data-i18n="about_volume_desc">
+          A water depth of 1 mm applied over an area of 1 square meter equals exactly 1 litre of water. Using the farmer's pump discharge capacity (L/h), the required pump operating duration is determined with mathematical precision.
+        </p>
+        <div style="background: var(--bg-surface-muted); padding: var(--space-4); border-radius: var(--radius-md); margin-top: var(--space-4); font-family: monospace; font-size: var(--font-size-sm); color: var(--text-main);">
+          Litres = Gross_mm × Area_m²<br>
+          m³ = Litres / 1000<br>
+          Weekly Litres = Litres × 7<br>
+          Pump Hours = Litres / Pump_Capacity (L/h)
+        </div>
+      </article>
+
+      <!-- Primary Citation -->
+      <div class="card card-elevated" style="background: linear-gradient(135deg, var(--bg-surface), var(--color-primary-50)); border-color: var(--color-primary-300);">
+        <h3 style="font-size: var(--font-size-base); color: var(--color-primary-800); margin-bottom: var(--space-2);">
+          Primary Scientific Citation
+        </h3>
+        <p style="font-size: var(--font-size-sm); color: var(--text-secondary); line-height: 1.6; margin-bottom: 0;">
+          Allen, R. G., Pereira, L. S., Raes, D., & Smith, M. (1998). <em>Crop evapotranspiration: Guidelines for computing crop water requirements</em>. FAO Irrigation and Drainage Paper No. 56. Food and Agriculture Organization of the United Nations, Rome, Italy.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container" style="text-align: center;">
+      <span style="font-size: var(--font-size-xs); color: var(--text-muted);" data-i18n="footer_rights">All rights reserved. Built with pure FAO-56 algorithms.</span>
+    </div>
+  </footer>
+
+  <!-- Application Script -->
+  <script type="module">
+    import { initI18n } from "./js/i18n.js";
+    import { initTheme, initNavbar } from "./js/ui.js";
+
+    initI18n();
+    initTheme();
+    initNavbar();
+  </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Page Not Found — Crop Hydro-Precision</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <!-- Google Fonts: Poppins & Noto Sans Tamil -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container navbar-container">
+      <a href="index.html" class="navbar-brand">
+        <img src="assets/logo.svg" alt="Crop Hydro-Precision Logo" class="navbar-logo" width="36" height="36">
+        <span data-i18n="brand_name">Crop Hydro-Precision</span>
+      </a>
+
+      <div class="navbar-actions">
+        <!-- Language Switcher Toggle -->
+        <button id="lang-toggle-btn" class="btn btn-ghost btn-sm" aria-label="Toggle language">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span class="lang-btn-text">தமிழ்</span>
+        </button>
+
+        <!-- Theme Switcher Toggle -->
+        <button id="theme-toggle-btn" class="btn btn-icon" aria-label="Toggle dark mode" data-i18n-title="theme_toggle_title">
+          <svg class="icon-sun hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 160px); padding: var(--space-8);">
+    <div class="card card-elevated" style="max-width: 520px; width: 100%; text-align: center; padding: var(--space-12) var(--space-8);">
+      <div style="font-size: 5rem; font-weight: 800; line-height: 1; color: var(--color-primary-600); margin-bottom: var(--space-4);">
+        404
+      </div>
+      <h1 style="font-size: var(--font-size-2xl); margin-bottom: var(--space-3);" data-i18n="err404_title">
+        Page Not Found
+      </h1>
+      <p style="color: var(--text-secondary); margin-bottom: var(--space-8);" data-i18n="err404_desc">
+        The agricultural page or calculation record you are looking for does not exist or may have been moved.
+      </p>
+      <div style="display: flex; justify-content: center; gap: var(--space-4); flex-wrap: wrap;">
+        <a href="index.html" class="btn btn-primary btn-lg" data-i18n="err404_btn">
+          Return to Homepage
+        </a>
+        <a href="dashboard.html" class="btn btn-secondary btn-lg" data-i18n="nav_dashboard">
+          Calculator
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container" style="text-align: center;">
+      <span style="font-size: var(--font-size-xs); color: var(--text-muted);" data-i18n="footer_rights">All rights reserved. Built with pure FAO-56 algorithms.</span>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initI18n } from "./js/i18n.js";
+    import { initTheme, initNavbar } from "./js/ui.js";
+
+    initI18n();
+    initTheme();
+    initNavbar();
+  </script>
+</body>
+</html>

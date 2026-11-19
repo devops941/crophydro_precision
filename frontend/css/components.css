@@ -583,6 +583,7 @@
 .table-wrapper {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
   background-color: var(--bg-surface);
@@ -590,6 +591,7 @@
 
 .table {
   width: 100%;
+  min-width: 700px;
   border-collapse: collapse;
   text-align: left;
 }
