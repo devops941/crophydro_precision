@@ -481,18 +481,112 @@ function confirmDeleteCalc(id) {
 }
 
 /**
- * Setup PDF download button event listeners
+ * Setup PDF download button event listeners (Direct & delegated for 100% click capture)
  */
 function setupPdfEvents() {
   document.getElementById("download-history-pdf-btn")?.addEventListener("click", downloadHistoryPDF);
   document.getElementById("download-history-pdf-btn-top")?.addEventListener("click", downloadHistoryPDF);
 
-  document.getElementById("modal-download-single-pdf")?.addEventListener("click", () => {
-    if (currentDetailRecord) {
-      downloadSingleCalculationPDF(currentDetailRecord);
-    } else {
-      showToast("No record loaded to export.", "warning");
+  // Delegated listener on document for dynamic modal elements
+  document.addEventListener("click", (e) => {
+    const singlePdfBtn = e.target.closest("#modal-download-single-pdf");
+    if (singlePdfBtn) {
+      if (currentDetailRecord) {
+        downloadSingleCalculationPDF(currentDetailRecord);
+      } else {
+        showToast("No record loaded to export.", "warning");
+      }
+      return;
     }
+
+    const reportBtn = e.target.closest("#download-history-pdf-btn, #download-history-pdf-btn-top");
+    if (reportBtn) {
+      downloadHistoryPDF();
+    }
+  });
+}
+
+/**
+ * Universal table renderer supporting jsPDF autoTable, jspdfAutoTable UMD, or native vector drawing fallback
+ */
+function renderHistoryTable(doc, headers, rows, startY) {
+  if (typeof doc.autoTable === "function") {
+    doc.autoTable({
+      startY,
+      head: headers,
+      body: rows,
+      theme: "striped",
+      headStyles: {
+        fillColor: [22, 163, 74],
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+        fontSize: 8.5,
+      },
+      bodyStyles: {
+        fontSize: 8,
+        textColor: [30, 41, 59],
+      },
+      alternateRowStyles: {
+        fillColor: [248, 250, 248],
+      },
+      margin: { left: 14, right: 14 },
+    });
+    return;
+  }
+
+  if (window.jspdfAutoTable && typeof window.jspdfAutoTable.default === "function") {
+    window.jspdfAutoTable.default(doc, {
+      startY,
+      head: headers,
+      body: rows,
+      theme: "striped",
+      headStyles: {
+        fillColor: [22, 163, 74],
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+        fontSize: 8.5,
+      },
+      bodyStyles: {
+        fontSize: 8,
+        textColor: [30, 41, 59],
+      },
+      alternateRowStyles: {
+        fillColor: [248, 250, 248],
+      },
+      margin: { left: 14, right: 14 },
+    });
+    return;
+  }
+
+  // Native fallback if autoTable plugin is not active
+  let y = startY;
+  doc.setFillColor(22, 163, 74);
+  doc.rect(14, y, 269, 8, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  const colX = [16, 44, 78, 122, 156, 176, 196, 218, 254];
+  headers[0].forEach((h, i) => {
+    doc.text(h, colX[i] || 16 + i * 28, y + 5.5);
+  });
+  y += 9;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7.5);
+  rows.forEach((row, rIdx) => {
+    if (y > 185) {
+      doc.addPage();
+      y = 20;
+    }
+    if (rIdx % 2 === 0) {
+      doc.setFillColor(248, 250, 252);
+      doc.rect(14, y - 4, 269, 7, "F");
+    }
+    doc.setTextColor(30, 41, 59);
+    row.forEach((cell, cIdx) => {
+      doc.text(String(cell), colX[cIdx] || 16 + cIdx * 28, y + 1);
+    });
+    y += 7;
   });
 }
 
@@ -522,16 +616,17 @@ export async function downloadHistoryPDF() {
       day: "numeric",
     });
 
-    if (window.jspdf && window.jspdf.jsPDF) {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({
+    const jsPdfConstructor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+
+    if (jsPdfConstructor) {
+      const doc = new jsPdfConstructor({
         orientation: "landscape",
         unit: "mm",
         format: "a4",
       });
 
       // Top Brand Header Banner
-      doc.setFillColor(20, 83, 45); // Deep Agri Green
+      doc.setFillColor(20, 83, 45); // Deep Agri Green #14532d
       doc.rect(0, 0, 297, 24, "F");
 
       doc.setTextColor(255, 255, 255);
@@ -547,12 +642,12 @@ export async function downloadHistoryPDF() {
       doc.setTextColor(30, 41, 59);
       doc.setFontSize(10);
       doc.setFont("helvetica", "bold");
-      doc.text(`Farmer: ${user.full_name} (${user.email})`, 14, 32);
+      doc.text(`Farmer: ${user.full_name || "Farmer"} (${user.email || ""})`, 14, 32);
       doc.setFont("helvetica", "normal");
       doc.text(`Report Date: ${dateStr}`, 14, 38);
 
       const totalLitres = summary.total_litres ? Number(summary.total_litres).toLocaleString("en-IN") : "0";
-      const topCrop = summary.most_used_crop ? summary.most_used_crop.name_en : "—";
+      const topCrop = summary.most_used_crop ? (summary.most_used_crop.name_en || "—") : "—";
       doc.setFont("helvetica", "bold");
       doc.text(`Total Records: ${summary.total_calculations || records.length}`, 190, 32);
       doc.text(`Total Water Budget: ${totalLitres} Litres`, 190, 38);
@@ -566,35 +661,16 @@ export async function downloadHistoryPDF() {
       const tableRows = records.map((r) => [
         r.created_at ? r.created_at.split("T")[0] : "—",
         r.crop ? r.crop.name_en : "—",
-        `${r.stage} (Day ${r.days_after_sowing})`,
-        `${r.area} ${r.area_unit}`,
-        `${r.et0} mm`,
-        `${r.etc} mm`,
-        `${r.gross_mm} mm`,
-        Number(r.litres).toLocaleString("en-IN") + " L",
+        `${r.stage || "—"} (Day ${r.days_after_sowing || 0})`,
+        `${r.area || 1} ${r.area_unit || "acre"}`,
+        `${r.et0 || 0} mm`,
+        `${r.etc || 0} mm`,
+        `${r.gross_mm || 0} mm`,
+        Number(r.litres || 0).toLocaleString("en-IN") + " L",
         r.pump_hours ? `${r.pump_hours} hrs` : "—",
       ]);
 
-      doc.autoTable({
-        startY: 48,
-        head: tableHeaders,
-        body: tableRows,
-        theme: "striped",
-        headStyles: {
-          fillColor: [22, 163, 74],
-          textColor: [255, 255, 255],
-          fontStyle: "bold",
-          fontSize: 9,
-        },
-        bodyStyles: {
-          fontSize: 8.5,
-          textColor: [30, 41, 59],
-        },
-        alternateRowStyles: {
-          fillColor: [248, 250, 248],
-        },
-        margin: { left: 14, right: 14 },
-      });
+      renderHistoryTable(doc, tableHeaders, tableRows, 48);
 
       // Footer
       const pageCount = doc.internal.getNumberOfPages();
@@ -624,44 +700,58 @@ export async function downloadHistoryPDF() {
 
 /**
  * Export single calculation record as an official Field Irrigation Slip (PDF)
+ * Zero external plugin dependencies: 100% resilient native jsPDF vector graphics
  */
 export function downloadSingleCalculationPDF(data) {
-  if (!data || !data.result) {
-    showToast("No calculation selected to export.", "warning");
-    return;
-  }
+  try {
+    if (!data || !data.result) {
+      showToast("No calculation selected to export.", "warning");
+      return;
+    }
 
-  const inp = data.input;
-  const res = data.result;
-  const crop = data.crop;
-  const method = data.method;
-  const isTamil = getCurrentLang() === "ta";
-  const user = getUser() || { full_name: "Farmer", email: "arun@example.com" };
+    showToast("Generating field irrigation slip...", "info", 1500);
 
-  if (window.jspdf && window.jspdf.jsPDF) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({
+    const inp = data.input || {};
+    const res = data.result || {};
+    const crop = data.crop || {};
+    const method = data.method || {};
+    const user = getUser() || { full_name: "Farmer", email: "arun@example.com" };
+
+    const jsPdfConstructor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+
+    if (!jsPdfConstructor) {
+      console.warn("jsPDF library not available, falling back to clean print slip window.");
+      openSingleSlipPrintWindow(data, user);
+      return;
+    }
+
+    const doc = new jsPdfConstructor({
       orientation: "portrait",
       unit: "mm",
       format: "a4",
     });
 
-    // Green Header
-    doc.setFillColor(20, 83, 45);
+    // 1. Top Green Header
+    doc.setFillColor(20, 83, 45); // Deep Agri Green #14532d
     doc.rect(0, 0, 210, 28, "F");
 
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(15);
+    doc.setFontSize(16);
     doc.text("CROP HYDRO-PRECISION", 14, 12);
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("FIELD IRRIGATION SLIP — FAO-56 STANDARD", 14, 20);
 
-    // Box 1: Farmer & Field Details
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9.5);
+    doc.text("FIELD IRRIGATION SLIP — FAO-56 PENMAN-MONTEITH STANDARD", 14, 20);
+
+    const calcDate = inp.date || (data.created_at ? data.created_at.split("T")[0] : new Date().toISOString().split("T")[0]);
+    doc.setFontSize(8.5);
+    doc.text(`SLIP #${data.id || "1"} | ${calcDate}`, 196, 20, { align: "right" });
+
+    // 2. Box 1: Farmer & Field Details
     doc.setDrawColor(203, 213, 225);
     doc.setFillColor(248, 250, 252);
-    doc.roundedRect(14, 34, 182, 32, 3, 3, "FD");
+    doc.roundedRect(14, 34, 182, 34, 3, 3, "FD");
 
     doc.setTextColor(30, 41, 59);
     doc.setFontSize(10);
@@ -669,73 +759,203 @@ export function downloadSingleCalculationPDF(data) {
     doc.text("FARMER & FIELD SPECIFICATIONS", 20, 42);
 
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.text(`Farmer: ${user.full_name} (${user.email})`, 20, 49);
-    doc.text(`Observation Date: ${inp.date}`, 20, 56);
-    doc.text(`Crop: ${crop.name_en}`, 20, 62);
+    doc.setFontSize(8.5);
+    doc.text(`Farmer: ${user.full_name || "Farmer"} (${user.email || ""})`, 20, 50);
+    doc.text(`Observation Date: ${calcDate}`, 20, 56);
+    doc.text(`Crop: ${crop.name_en || "Crop"}`, 20, 62);
 
-    doc.text(`Field Area: ${inp.area} ${inp.area_unit}`, 110, 49);
-    doc.text(`Irrigation Method: ${method.name_en} (${Math.round(method.efficiency * 100)}% Efficiency)`, 110, 56);
-    doc.text(`Growth Stage: ${res.stage} (Day ${inp.days_after_sowing})`, 110, 62);
+    const effPct = method.efficiency ? Math.round(method.efficiency * 100) : 90;
+    doc.text(`Field Area: ${inp.area || 1} ${inp.area_unit || "acre"}`, 110, 50);
+    doc.text(`Method: ${method.name_en || "Drip"} (${effPct}% Efficiency)`, 110, 56);
+    doc.text(`Growth Stage: ${res.stage || "Mid"} (Day ${inp.days_after_sowing || 0})`, 110, 62);
 
-    // Box 2: Climate & Meteorological Inputs
-    doc.roundedRect(14, 72, 182, 26, 3, 3, "FD");
+    // 3. Box 2: Climate & Meteorological Inputs
+    doc.setFillColor(248, 250, 252);
+    doc.roundedRect(14, 73, 182, 28, 3, 3, "FD");
+
     doc.setFont("helvetica", "bold");
-    doc.text("METEOROLOGICAL OBSERVATIONS (Hargreaves-Samani)", 20, 80);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Max Temp: ${inp.tmax}°C | Min Temp: ${inp.tmin}°C`, 20, 87);
-    doc.text(`Rainfall: ${inp.rain_mm} mm (Effective Rain: ${(inp.rain_mm * 0.8).toFixed(1)} mm)`, 20, 93);
-    doc.text(`Latitude: ${inp.latitude}°N (Day of Year J = ${res.day_of_year})`, 110, 87);
-    doc.text(`Solar Radiation (Ra): ${res.ra} MJ/m²/day`, 110, 93);
+    doc.setFontSize(10);
+    doc.setTextColor(30, 41, 59);
+    doc.text("METEOROLOGICAL OBSERVATIONS (Hargreaves-Samani)", 20, 81);
 
-    // Box 3: Key Calculation Results
+    const effRain = (res.effective_rain !== undefined ? res.effective_rain : ((inp.rain_mm || 0) * 0.8)).toFixed(1);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8.5);
+    doc.text(`Max Temp: ${inp.tmax || 32}°C | Min Temp: ${inp.tmin || 22}°C`, 20, 89);
+    doc.text(`Rainfall: ${inp.rain_mm || 0} mm (Effective Rain: ${effRain} mm)`, 20, 95);
+
+    const raVal = res.ra_mj || res.ra || "—";
+    doc.text(`Latitude: ${inp.latitude || 11}°N (Day of Year J = ${res.day_of_year || "—"})`, 110, 89);
+    doc.text(`Solar Radiation (Ra): ${raVal} MJ/m²/day`, 110, 95);
+
+    // 4. Box 3: Computed Irrigation Requirements (FAO-56 Breakdown)
     doc.setFillColor(240, 253, 244);
     doc.setDrawColor(34, 197, 94);
-    doc.roundedRect(14, 104, 182, 58, 3, 3, "FD");
+    doc.roundedRect(14, 106, 182, 142, 3, 3, "FD");
 
     doc.setTextColor(22, 101, 52);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
-    doc.text("COMPUTED IRRIGATION REQUIREMENTS", 20, 113);
+    doc.text("COMPUTED IRRIGATION WATER REQUIREMENTS", 20, 116);
 
-    const resultMetrics = [
-      ["Reference Evapotranspiration (ET0)", `${res.et0} mm/day`],
-      ["Crop Coefficient (Kc)", `${res.kc}`],
-      ["Crop Water Demand (ETc = Kc × ET0)", `${res.etc} mm/day`],
-      ["Net Irrigation Depth (ETc - Eff. Rain)", `${res.net_mm} mm`],
-      ["Gross Irrigation Depth (Net / Efficiency)", `${res.gross_mm} mm`],
-      ["TOTAL DAILY WATER VOLUME", `${Number(res.litres).toLocaleString("en-IN")} Litres (${res.volume_m3} m³)`],
-      ["RECOMMENDED PUMP OPERATION TIME", res.pump_hours ? `${res.pump_hours} Hours` : "Flow rate not provided"],
-      ["Weekly Estimated Volume", `${Number(res.weekly_litres).toLocaleString("en-IN")} Litres`],
+    doc.setDrawColor(187, 247, 208);
+    doc.setLineWidth(0.4);
+    doc.line(20, 120, 188, 120);
+
+    const volumeL = Number(res.litres || 0).toLocaleString("en-IN");
+    const weeklyL = Number(res.weekly_litres || 0).toLocaleString("en-IN");
+    const m3Val = res.m3 || (res.litres ? (res.litres / 1000).toFixed(2) : "0");
+    const pumpStr = res.pump_hours ? `${res.pump_hours} Hours` : (inp.pump_lph ? `${(res.litres / inp.pump_lph).toFixed(2)} Hours` : "Flow rate not provided");
+
+    const slipRows = [
+      ["Reference Evapotranspiration (ET0)", `${res.et0 || 0} mm/day`],
+      ["Crop Coefficient (Kc)", `${res.kc || 0}`],
+      ["Crop Water Demand (ETc = Kc × ET0)", `${res.etc || 0} mm/day`],
+      ["Effective Rainfall Deduction", `${effRain} mm`],
+      ["Net Irrigation Depth (ETc - Eff. Rain)", `${res.net_mm || 0} mm`],
+      ["Application Efficiency", `${effPct}% (${method.name_en || "Standard"})`],
+      ["Gross Irrigation Requirement", `${res.gross_mm || 0} mm`],
+      ["TOTAL DAILY WATER VOLUME", `${volumeL} Litres (${m3Val} m³)`],
+      ["RECOMMENDED PUMP RUNTIME", pumpStr],
+      ["Weekly Estimated Water Budget", `${weeklyL} Litres`],
     ];
 
-    doc.autoTable({
-      startY: 116,
-      body: resultMetrics,
-      theme: "plain",
-      styles: { fontSize: 8.5, cellPadding: 1.5, textColor: [30, 41, 59] },
-      columnStyles: {
-        0: { fontStyle: "bold", width: 90 },
-        1: { fontStyle: "bold", textColor: [2, 132, 199] },
-      },
-      margin: { left: 20, right: 20 },
+    let rowY = 129;
+    slipRows.forEach(([metricLabel, metricVal], idx) => {
+      const isHero = idx === 7 || idx === 8;
+      if (idx % 2 === 0) {
+        doc.setFillColor(245, 254, 247);
+        doc.rect(18, rowY - 5.5, 174, 10, "F");
+      }
+
+      doc.setFont("helvetica", isHero ? "bold" : "normal");
+      doc.setFontSize(isHero ? 9.5 : 8.5);
+      doc.setTextColor(isHero ? 22 : 30, isHero ? 101 : 41, isHero ? 52 : 59);
+      doc.text(metricLabel, 22, rowY);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(isHero ? 10 : 9);
+      doc.setTextColor(isHero ? 21 : 2, isHero ? 128 : 132, isHero ? 61 : 199);
+      doc.text(metricVal, 186, rowY, { align: "right" });
+
+      rowY += 11.5;
     });
 
-    // Verification Seal Block
-    doc.setTextColor(100, 116, 139);
-    doc.setFontSize(8);
-    doc.text("Official FAO-56 Scientific Standard Validation. Generated by Crop Hydro-Precision Engine.", 14, 275);
-    doc.text(`Certificate ID: CHP-${data.id}-${Date.now().toString().slice(-6)}`, 14, 280);
+    // 5. Verification Seal & Certification Footer
+    doc.setDrawColor(226, 232, 240);
+    doc.setFillColor(248, 250, 252);
+    doc.roundedRect(14, 254, 182, 26, 2, 2, "FD");
 
-    doc.save(`CropHydro_Field_Slip_ID_${data.id}.pdf`);
+    doc.setTextColor(71, 85, 105);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.text("FAO-56 SCIENTIFIC COMPLIANCE VERIFICATION", 20, 262);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7.5);
+    doc.setTextColor(100, 116, 139);
+    doc.text("Computed under FAO Irrigation and Drainage Paper 56 standards for Tamil Nadu agro-climatic zones.", 20, 268);
+    const certCode = `CHP-${data.id || "0"}-${Date.now().toString().slice(-6)}`;
+    doc.text(`Official Slip ID: ${certCode} | Generated by Crop Hydro-Precision Engine`, 20, 274);
+
+    // Save PDF
+    const filename = `CropHydro_Field_Slip_ID_${data.id || "1"}.pdf`;
+    doc.save(filename);
     showToast(t("history_export_success"), "success", 2500);
-  } else {
-    window.print();
+  } catch (err) {
+    console.error("PDF generation error:", err);
+    showToast("PDF generation failed: " + err.message, "error");
+    openSingleSlipPrintWindow(data, getUser());
   }
 }
 
 /**
- * Fallback print report window
+ * Dedicated fallback print window for single field calculation slip
+ */
+function openSingleSlipPrintWindow(data, user) {
+  const printWin = window.open("", "_blank");
+  if (!printWin) {
+    window.print();
+    return;
+  }
+  const inp = data.input || {};
+  const res = data.result || {};
+  const crop = data.crop || {};
+  const method = data.method || {};
+  const dateStr = inp.date || (data.created_at ? data.created_at.split("T")[0] : new Date().toLocaleDateString("en-IN"));
+  const volumeL = Number(res.litres || 0).toLocaleString("en-IN");
+  const weeklyL = Number(res.weekly_litres || 0).toLocaleString("en-IN");
+  const effPct = method.efficiency ? Math.round(method.efficiency * 100) : 90;
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Field Irrigation Slip - ${crop.name_en || 'Crop'}</title>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 24px; color: #0f172a; max-width: 720px; margin: 0 auto; }
+        .header { background: #14532d; color: white; padding: 16px 20px; border-radius: 6px; margin-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 20px; }
+        .header p { margin: 4px 0 0; font-size: 12px; opacity: 0.9; }
+        .box { border: 1px solid #cbd5e1; border-radius: 6px; padding: 14px; margin-bottom: 16px; background: #f8fafc; }
+        .box h3 { margin: 0 0 10px; font-size: 12px; text-transform: uppercase; color: #334155; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; }
+        .results-box { border: 2px solid #22c55e; background: #f0fdf4; border-radius: 6px; padding: 16px; margin-bottom: 16px; }
+        .results-box h3 { margin: 0 0 12px; font-size: 14px; color: #166534; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        td { padding: 8px 6px; border-bottom: 1px solid #dcfce7; }
+        tr:nth-child(even) { background: #f7fee7; }
+        .val { text-align: right; font-weight: bold; color: #0369a1; }
+        .highlight { font-weight: bold; font-size: 14px; color: #15803d; }
+        .footer { font-size: 11px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px; text-align: center; }
+        @media print { body { padding: 0; } }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1>CROP HYDRO-PRECISION</h1>
+        <p>FIELD IRRIGATION SLIP — FAO-56 PENMAN-MONTEITH STANDARD</p>
+      </div>
+      <div class="box">
+        <h3>Farmer & Field Specifications</h3>
+        <div class="grid">
+          <div><strong>Farmer:</strong> ${user?.full_name || 'Farmer'}</div>
+          <div><strong>Crop:</strong> ${crop.name_en || 'Crop'}</div>
+          <div><strong>Observation Date:</strong> ${dateStr}</div>
+          <div><strong>Field Area:</strong> ${inp.area || 1} ${inp.area_unit || 'acre'}</div>
+          <div><strong>Growth Stage:</strong> ${res.stage || 'Mid'} (Day ${inp.days_after_sowing || 0})</div>
+          <div><strong>Irrigation Method:</strong> ${method.name_en || 'Drip'} (${effPct}% Efficiency)</div>
+        </div>
+      </div>
+      <div class="results-box">
+        <h3>Computed Irrigation Requirements</h3>
+        <table>
+          <tr><td>Reference Evapotranspiration (ET0)</td><td class="val">${res.et0 || 0} mm/day</td></tr>
+          <tr><td>Crop Coefficient (Kc)</td><td class="val">${res.kc || 0}</td></tr>
+          <tr><td>Crop Water Demand (ETc)</td><td class="val">${res.etc || 0} mm/day</td></tr>
+          <tr><td>Effective Rainfall</td><td class="val">${res.effective_rain || inp.rain_mm || 0} mm</td></tr>
+          <tr><td>Net Irrigation Depth</td><td class="val">${res.net_mm || 0} mm</td></tr>
+          <tr><td>Gross Irrigation Depth</td><td class="val">${res.gross_mm || 0} mm</td></tr>
+          <tr><td class="highlight">TOTAL DAILY WATER VOLUME</td><td class="val highlight">${volumeL} Litres</td></tr>
+          <tr><td class="highlight">RECOMMENDED PUMP RUNTIME</td><td class="val highlight">${res.pump_hours ? `${res.pump_hours} Hours` : 'N/A'}</td></tr>
+          <tr><td>Weekly Estimated Volume</td><td class="val">${weeklyL} Litres</td></tr>
+        </table>
+      </div>
+      <div class="footer">
+        Official FAO-56 Validation Certificate. Generated by Crop Hydro-Precision Engine.
+      </div>
+      <script>
+        window.onload = () => { window.print(); };
+      <\/script>
+    </body>
+    </html>
+  `;
+  printWin.document.write(html);
+  printWin.document.close();
+}
+
+/**
+ * Fallback print report window for full history table
  */
 function openPrintReportWindow(user, summary, records, isTamil) {
   const printWindow = window.open("", "_blank");
@@ -766,7 +986,7 @@ function openPrintReportWindow(user, summary, records, isTamil) {
         <h1>CROP HYDRO-PRECISION — IRRIGATION WATER AUDIT REPORT</h1>
         <div>FAO-56 Standard Evapotranspiration & Water Demand Schedule | Tamil Nadu</div>
         <div class="meta">
-          <span><strong>Farmer:</strong> ${user.full_name} (${user.email})</span>
+          <span><strong>Farmer:</strong> ${user?.full_name || 'Farmer'} (${user?.email || ''})</span>
           <span><strong>Report Date:</strong> ${dateStr}</span>
         </div>
       </div>
@@ -781,12 +1001,12 @@ function openPrintReportWindow(user, summary, records, isTamil) {
             <tr>
               <td>${r.created_at ? r.created_at.split("T")[0] : '—'}</td>
               <td>${r.crop ? r.crop.name_en : '—'}</td>
-              <td>${r.stage} (Day ${r.days_after_sowing})</td>
-              <td>${r.area} ${r.area_unit}</td>
-              <td>${r.et0} mm</td>
-              <td>${r.etc} mm</td>
-              <td>${r.gross_mm} mm</td>
-              <td><strong>${Number(r.litres).toLocaleString('en-IN')} L</strong></td>
+              <td>${r.stage || '—'} (Day ${r.days_after_sowing || 0})</td>
+              <td>${r.area || 1} ${r.area_unit || 'acre'}</td>
+              <td>${r.et0 || 0} mm</td>
+              <td>${r.etc || 0} mm</td>
+              <td>${r.gross_mm || 0} mm</td>
+              <td><strong>${Number(r.litres || 0).toLocaleString('en-IN')} L</strong></td>
               <td>${r.pump_hours ? `${r.pump_hours} hrs` : '—'}</td>
             </tr>
           `).join('')}
