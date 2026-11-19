@@ -213,6 +213,9 @@ export const translations = {
     history_prev: "Previous",
     history_next: "Next",
     history_modal_title: "Calculation Breakdown",
+    history_download_pdf: "Download PDF Report",
+    history_download_single_pdf: "Download Slip (PDF)",
+    history_export_success: "PDF report generated successfully!",
 
     // About Page Translations (English)
     about_hero_title: "The Science of Crop Water Precision",
@@ -433,6 +436,9 @@ export const translations = {
     history_prev: "முந்தையது",
     history_next: "அடுத்தது",
     history_modal_title: "முழு கணக்கீட்டு விளக்கம்",
+    history_download_pdf: "PDF அறிக்கை பதிவிறக்கு",
+    history_download_single_pdf: "பாசனச் சீட்டு (PDF)",
+    history_export_success: "PDF அறிக்கை வெற்றிகரமாக உருவாக்கப்பட்டது!",
 
     // About Page Translations (Tamil)
     about_hero_title: "துல்லிய பயிர் நீர் அறிவியல்",

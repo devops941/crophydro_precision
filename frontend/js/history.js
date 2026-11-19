@@ -8,7 +8,7 @@
  */
 
 import { api } from "./api.js";
-import { requireAuth } from "./auth.js";
+import { requireAuth, getUser } from "./auth.js";
 import { getCurrentLang, translateStage, formatNumber, t } from "./i18n.js";
 import { showToast, showConfirmModal } from "./ui.js";
 
@@ -20,12 +20,14 @@ if (!requireAuth()) {
 let currentPage = 1;
 let totalPages = 1;
 let historyChartInstance = null;
+let currentDetailRecord = null;
 
 export async function initHistoryPage() {
   await loadHistoryChart();
   await loadHistoryTable(currentPage);
   setupPaginationEvents();
   setupModalEvents();
+  setupPdfEvents();
 
   // Handle language switch
   document.getElementById("lang-toggle-btn")?.addEventListener("click", () => {
@@ -367,6 +369,7 @@ async function openDetailModal(id) {
 
   try {
     const data = await api(`/history/${id}/`, { auth: true });
+    currentDetailRecord = data;
     const inp = data.input;
     const res = data.result;
     const crop = data.crop;
@@ -475,4 +478,329 @@ function confirmDeleteCalc(id) {
       }
     },
   });
+}
+
+/**
+ * Setup PDF download button event listeners
+ */
+function setupPdfEvents() {
+  document.getElementById("download-history-pdf-btn")?.addEventListener("click", downloadHistoryPDF);
+  document.getElementById("download-history-pdf-btn-top")?.addEventListener("click", downloadHistoryPDF);
+
+  document.getElementById("modal-download-single-pdf")?.addEventListener("click", () => {
+    if (currentDetailRecord) {
+      downloadSingleCalculationPDF(currentDetailRecord);
+    } else {
+      showToast("No record loaded to export.", "warning");
+    }
+  });
+}
+
+/**
+ * Export full calculation history as an official PDF report
+ */
+export async function downloadHistoryPDF() {
+  try {
+    showToast("Preparing your PDF report...", "info", 1800);
+
+    const [summary, historyData] = await Promise.all([
+      api("/history/summary/", { auth: true }),
+      api("/history/?page=1", { auth: true }),
+    ]);
+
+    const records = historyData.results || [];
+    if (records.length === 0) {
+      showToast("No calculations found to export.", "warning");
+      return;
+    }
+
+    const isTamil = getCurrentLang() === "ta";
+    const user = getUser() || { full_name: "Farmer", email: "arun@example.com" };
+    const dateStr = new Date().toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+
+    if (window.jspdf && window.jspdf.jsPDF) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+      });
+
+      // Top Brand Header Banner
+      doc.setFillColor(20, 83, 45); // Deep Agri Green
+      doc.rect(0, 0, 297, 24, "F");
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.text("CROP HYDRO-PRECISION — FARM IRRIGATION AUDIT REPORT", 14, 11);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.text("FAO-56 Standard Evapotranspiration & Water Demand Schedule | Tamil Nadu, India", 14, 18);
+
+      // Metadata & Farmer Info
+      doc.setTextColor(30, 41, 59);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold");
+      doc.text(`Farmer: ${user.full_name} (${user.email})`, 14, 32);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Report Date: ${dateStr}`, 14, 38);
+
+      const totalLitres = summary.total_litres ? Number(summary.total_litres).toLocaleString("en-IN") : "0";
+      const topCrop = summary.most_used_crop ? summary.most_used_crop.name_en : "—";
+      doc.setFont("helvetica", "bold");
+      doc.text(`Total Records: ${summary.total_calculations || records.length}`, 190, 32);
+      doc.text(`Total Water Budget: ${totalLitres} Litres`, 190, 38);
+      doc.text(`Primary Crop: ${topCrop}`, 190, 44);
+
+      // Table Data
+      const tableHeaders = [
+        ["Date", "Crop", "Growth Stage (DAS)", "Field Area", "ET0 (mm)", "ETc (mm)", "Gross mm", "Daily Volume", "Pump Hours"]
+      ];
+
+      const tableRows = records.map((r) => [
+        r.created_at ? r.created_at.split("T")[0] : "—",
+        r.crop ? r.crop.name_en : "—",
+        `${r.stage} (Day ${r.days_after_sowing})`,
+        `${r.area} ${r.area_unit}`,
+        `${r.et0} mm`,
+        `${r.etc} mm`,
+        `${r.gross_mm} mm`,
+        Number(r.litres).toLocaleString("en-IN") + " L",
+        r.pump_hours ? `${r.pump_hours} hrs` : "—",
+      ]);
+
+      doc.autoTable({
+        startY: 48,
+        head: tableHeaders,
+        body: tableRows,
+        theme: "striped",
+        headStyles: {
+          fillColor: [22, 163, 74],
+          textColor: [255, 255, 255],
+          fontStyle: "bold",
+          fontSize: 9,
+        },
+        bodyStyles: {
+          fontSize: 8.5,
+          textColor: [30, 41, 59],
+        },
+        alternateRowStyles: {
+          fillColor: [248, 250, 248],
+        },
+        margin: { left: 14, right: 14 },
+      });
+
+      // Footer
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(148, 163, 184);
+        doc.text(
+          "Compliant with FAO Irrigation and Drainage Paper 56 standard calculations. © 2026 CropHydroPrecision.",
+          14,
+          200
+        );
+        doc.text(`Page ${i} of ${pageCount}`, 270, 200);
+      }
+
+      doc.save(`CropHydro_Irrigation_Report_${dateStr.replace(/[\s,]+/g, "_")}.pdf`);
+      showToast(t("history_export_success"), "success", 2500);
+    } else {
+      // Fallback: Trigger native print report window
+      openPrintReportWindow(user, summary, records, isTamil);
+    }
+  } catch (err) {
+    console.error("PDF generation error:", err);
+    showToast("PDF generation failed: " + err.message, "error");
+  }
+}
+
+/**
+ * Export single calculation record as an official Field Irrigation Slip (PDF)
+ */
+export function downloadSingleCalculationPDF(data) {
+  if (!data || !data.result) {
+    showToast("No calculation selected to export.", "warning");
+    return;
+  }
+
+  const inp = data.input;
+  const res = data.result;
+  const crop = data.crop;
+  const method = data.method;
+  const isTamil = getCurrentLang() === "ta";
+  const user = getUser() || { full_name: "Farmer", email: "arun@example.com" };
+
+  if (window.jspdf && window.jspdf.jsPDF) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
+
+    // Green Header
+    doc.setFillColor(20, 83, 45);
+    doc.rect(0, 0, 210, 28, "F");
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(15);
+    doc.text("CROP HYDRO-PRECISION", 14, 12);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("FIELD IRRIGATION SLIP — FAO-56 STANDARD", 14, 20);
+
+    // Box 1: Farmer & Field Details
+    doc.setDrawColor(203, 213, 225);
+    doc.setFillColor(248, 250, 252);
+    doc.roundedRect(14, 34, 182, 32, 3, 3, "FD");
+
+    doc.setTextColor(30, 41, 59);
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text("FARMER & FIELD SPECIFICATIONS", 20, 42);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(`Farmer: ${user.full_name} (${user.email})`, 20, 49);
+    doc.text(`Observation Date: ${inp.date}`, 20, 56);
+    doc.text(`Crop: ${crop.name_en}`, 20, 62);
+
+    doc.text(`Field Area: ${inp.area} ${inp.area_unit}`, 110, 49);
+    doc.text(`Irrigation Method: ${method.name_en} (${Math.round(method.efficiency * 100)}% Efficiency)`, 110, 56);
+    doc.text(`Growth Stage: ${res.stage} (Day ${inp.days_after_sowing})`, 110, 62);
+
+    // Box 2: Climate & Meteorological Inputs
+    doc.roundedRect(14, 72, 182, 26, 3, 3, "FD");
+    doc.setFont("helvetica", "bold");
+    doc.text("METEOROLOGICAL OBSERVATIONS (Hargreaves-Samani)", 20, 80);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Max Temp: ${inp.tmax}°C | Min Temp: ${inp.tmin}°C`, 20, 87);
+    doc.text(`Rainfall: ${inp.rain_mm} mm (Effective Rain: ${(inp.rain_mm * 0.8).toFixed(1)} mm)`, 20, 93);
+    doc.text(`Latitude: ${inp.latitude}°N (Day of Year J = ${res.day_of_year})`, 110, 87);
+    doc.text(`Solar Radiation (Ra): ${res.ra} MJ/m²/day`, 110, 93);
+
+    // Box 3: Key Calculation Results
+    doc.setFillColor(240, 253, 244);
+    doc.setDrawColor(34, 197, 94);
+    doc.roundedRect(14, 104, 182, 58, 3, 3, "FD");
+
+    doc.setTextColor(22, 101, 52);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("COMPUTED IRRIGATION REQUIREMENTS", 20, 113);
+
+    const resultMetrics = [
+      ["Reference Evapotranspiration (ET0)", `${res.et0} mm/day`],
+      ["Crop Coefficient (Kc)", `${res.kc}`],
+      ["Crop Water Demand (ETc = Kc × ET0)", `${res.etc} mm/day`],
+      ["Net Irrigation Depth (ETc - Eff. Rain)", `${res.net_mm} mm`],
+      ["Gross Irrigation Depth (Net / Efficiency)", `${res.gross_mm} mm`],
+      ["TOTAL DAILY WATER VOLUME", `${Number(res.litres).toLocaleString("en-IN")} Litres (${res.volume_m3} m³)`],
+      ["RECOMMENDED PUMP OPERATION TIME", res.pump_hours ? `${res.pump_hours} Hours` : "Flow rate not provided"],
+      ["Weekly Estimated Volume", `${Number(res.weekly_litres).toLocaleString("en-IN")} Litres`],
+    ];
+
+    doc.autoTable({
+      startY: 116,
+      body: resultMetrics,
+      theme: "plain",
+      styles: { fontSize: 8.5, cellPadding: 1.5, textColor: [30, 41, 59] },
+      columnStyles: {
+        0: { fontStyle: "bold", width: 90 },
+        1: { fontStyle: "bold", textColor: [2, 132, 199] },
+      },
+      margin: { left: 20, right: 20 },
+    });
+
+    // Verification Seal Block
+    doc.setTextColor(100, 116, 139);
+    doc.setFontSize(8);
+    doc.text("Official FAO-56 Scientific Standard Validation. Generated by Crop Hydro-Precision Engine.", 14, 275);
+    doc.text(`Certificate ID: CHP-${data.id}-${Date.now().toString().slice(-6)}`, 14, 280);
+
+    doc.save(`CropHydro_Field_Slip_ID_${data.id}.pdf`);
+    showToast(t("history_export_success"), "success", 2500);
+  } else {
+    window.print();
+  }
+}
+
+/**
+ * Fallback print report window
+ */
+function openPrintReportWindow(user, summary, records, isTamil) {
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) {
+    window.print();
+    return;
+  }
+  const dateStr = new Date().toLocaleDateString("en-IN");
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Crop Hydro-Precision — Irrigation Report</title>
+      <style>
+        body { font-family: -apple-system, sans-serif; padding: 24px; color: #0f172a; }
+        .header { border-bottom: 3px solid #16a34a; padding-bottom: 12px; margin-bottom: 20px; }
+        h1 { color: #166534; font-size: 20px; margin: 0 0 4px; }
+        .meta { display: flex; justify-content: space-between; font-size: 13px; color: #475569; margin-top: 8px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 12px; }
+        th { background: #f0fdf4; color: #166534; text-align: left; padding: 8px; border: 1px solid #cbd5e1; }
+        td { padding: 8px; border: 1px solid #cbd5e1; }
+        tr:nth-child(even) { background: #f8fafc; }
+        @media print { body { padding: 0; } }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1>CROP HYDRO-PRECISION — IRRIGATION WATER AUDIT REPORT</h1>
+        <div>FAO-56 Standard Evapotranspiration & Water Demand Schedule | Tamil Nadu</div>
+        <div class="meta">
+          <span><strong>Farmer:</strong> ${user.full_name} (${user.email})</span>
+          <span><strong>Report Date:</strong> ${dateStr}</span>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>Crop</th><th>Stage</th><th>Area</th><th>ET0</th><th>ETc</th><th>Gross</th><th>Daily Volume</th><th>Pump Hours</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${records.map(r => `
+            <tr>
+              <td>${r.created_at ? r.created_at.split("T")[0] : '—'}</td>
+              <td>${r.crop ? r.crop.name_en : '—'}</td>
+              <td>${r.stage} (Day ${r.days_after_sowing})</td>
+              <td>${r.area} ${r.area_unit}</td>
+              <td>${r.et0} mm</td>
+              <td>${r.etc} mm</td>
+              <td>${r.gross_mm} mm</td>
+              <td><strong>${Number(r.litres).toLocaleString('en-IN')} L</strong></td>
+              <td>${r.pump_hours ? `${r.pump_hours} hrs` : '—'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      <div style="margin-top: 24px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 8px;">
+        Compliant with FAO Irrigation and Drainage Paper 56 standards. © 2026 CropHydroPrecision.
+      </div>
+      <script>
+        window.onload = () => { window.print(); };
+      <\/script>
+    </body>
+    </html>
+  `;
+  printWindow.document.write(html);
+  printWindow.document.close();
 }
