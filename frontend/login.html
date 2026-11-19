@@ -49,93 +49,129 @@
   </header>
 
   <main>
-    <div class="auth-page-container">
-      <!-- Form Side -->
-      <div class="auth-form-side">
-        <div style="margin-bottom: var(--space-8);">
-          <h1 style="font-size: var(--font-size-2xl); margin-bottom: var(--space-2);" data-i18n="auth_login_title">Welcome Back</h1>
-          <p style="font-size: var(--font-size-sm); color: var(--text-secondary);" data-i18n="auth_login_subtitle">
-            Sign in to access your farm calculations, seasonal Kc curves, and pump schedules.
-          </p>
-        </div>
+    <!-- Ambient Floating Glass Glow Blobs -->
+    <div class="auth-bg-blob auth-blob-1" aria-hidden="true"></div>
+    <div class="auth-bg-blob auth-blob-2" aria-hidden="true"></div>
+    <div class="auth-bg-blob auth-blob-3" aria-hidden="true"></div>
 
-        <form id="login-form" novalidate>
-          <!-- Email Input -->
-          <div class="form-group">
-            <label for="login-email" class="form-label" data-i18n="auth_email_label">Email Address</label>
-            <input type="email" id="login-email" class="form-control" autocomplete="email" required placeholder="arun@example.com" data-i18n-placeholder="auth_email_placeholder">
-            <span class="form-error" id="email-error"></span>
+    <div class="auth-page-container">
+      <!-- Floating Glass Bento Card -->
+      <div class="auth-card-frame">
+        <!-- Form Side -->
+        <div class="auth-form-side">
+          <div>
+            <div class="auth-pill-tag">
+              <span class="pulse-dot"></span>
+              <span>Farmer Access Portal • உழவர் தளம்</span>
+            </div>
+            <h1 class="auth-title" data-i18n="auth_login_title">Welcome Back</h1>
+            <p class="auth-subtitle" data-i18n="auth_login_subtitle">
+              Sign in to access your farm calculations, seasonal Kc curves, and pump schedules.
+            </p>
           </div>
 
-          <!-- Password Input with Toggle -->
-          <div class="form-group">
-            <label for="login-password" class="form-label" data-i18n="auth_password_label">Password</label>
-            <div class="input-group">
-              <input type="password" id="login-password" class="form-control" autocomplete="current-password" required placeholder="Enter password" data-i18n-placeholder="auth_password_placeholder">
-              <button type="button" class="btn btn-secondary" id="toggle-password-btn" style="border-top-left-radius: 0; border-bottom-left-radius: 0; padding: 0 var(--space-3);" aria-label="Toggle password visibility">
-                <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          <form id="login-form" novalidate>
+            <!-- Email Input -->
+            <div class="form-group">
+              <label for="login-email" class="form-label" data-i18n="auth_email_label">Email Address</label>
+              <input type="email" id="login-email" class="form-control" autocomplete="email" required placeholder="arun@example.com" data-i18n-placeholder="auth_email_placeholder">
+              <span class="form-error" id="email-error"></span>
+            </div>
+
+            <!-- Password Input with Toggle -->
+            <div class="form-group">
+              <label for="login-password" class="form-label" data-i18n="auth_password_label">Password</label>
+              <div class="input-group">
+                <input type="password" id="login-password" class="form-control" autocomplete="current-password" required placeholder="Enter password" data-i18n-placeholder="auth_password_placeholder">
+                <button type="button" class="btn btn-secondary" id="toggle-password-btn" style="border-top-left-radius: 0; border-bottom-left-radius: 0; padding: 0 var(--space-3);" aria-label="Toggle password visibility">
+                  <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+              </div>
+              <span class="form-error" id="password-error"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <div style="margin-top: var(--space-6); margin-bottom: var(--space-4);">
+              <button type="submit" id="login-submit-btn" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center; font-size: var(--font-size-base); padding: 0.85rem 1.5rem;">
+                <span data-i18n="auth_login_btn">Sign In</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </button>
             </div>
-            <span class="form-error" id="password-error"></span>
-          </div>
 
-          <!-- Submit Button -->
-          <div style="margin-top: var(--space-6); margin-bottom: var(--space-6);">
-            <button type="submit" id="login-submit-btn" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center;">
-              <span data-i18n="auth_login_btn">Sign In</span>
-            </button>
-          </div>
+            <!-- Quick Demo Fill Helper -->
+            <div style="text-align: center; margin-bottom: var(--space-4);">
+              <button type="button" id="demo-fill-btn" class="btn btn-ghost btn-sm" style="color: var(--color-primary-600); font-weight: 600; font-size: var(--font-size-xs);">
+                ⚡ Quick Demo: arun@example.com
+              </button>
+            </div>
 
-          <!-- General Error Slot -->
-          <div id="general-error" class="form-error" style="text-align: center; margin-bottom: var(--space-4);"></div>
+            <!-- General Error Slot -->
+            <div id="general-error" class="form-error" style="text-align: center; margin-bottom: var(--space-3);"></div>
 
-          <!-- Registration Link -->
-          <div style="text-align: center; font-size: var(--font-size-sm); color: var(--text-secondary);">
-            <span data-i18n="auth_no_account">Don't have an account?</span>
-            <a href="register.html" style="font-weight: 600; margin-left: var(--space-1);" data-i18n="auth_register_link">Register for free</a>
-          </div>
-        </form>
-      </div>
-
-      <!-- Right Side Visual / Illustration Panel (Desktop) -->
-      <div class="auth-side-panel">
-        <div>
-          <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-8);">
-            <img src="assets/logo.svg" alt="Logo" width="40" height="40">
-            <span style="font-size: var(--font-size-xl); font-weight: 700;" data-i18n="brand_name">Crop Hydro-Precision</span>
-          </div>
-          <h2 style="color: #ffffff; font-size: var(--font-size-3xl); line-height: 1.2; margin-bottom: var(--space-4);" data-i18n="auth_side_heading">
-            Science-Driven Water Management
-          </h2>
-          <p style="color: #e0f2fe; font-size: var(--font-size-base); max-width: 460px; line-height: 1.6;" data-i18n="auth_side_desc">
-            Join farmers and agricultural researchers across Tamil Nadu using FAO-56 standards to preserve groundwater and boost crop yield.
-          </p>
+            <!-- Registration Link -->
+            <div style="text-align: center; font-size: var(--font-size-sm); color: var(--text-secondary); padding-top: var(--space-2); border-top: 1px dashed var(--border-subtle);">
+              <span data-i18n="auth_no_account">Don't have an account?</span>
+              <a href="register.html" style="font-weight: 600; margin-left: var(--space-1); color: var(--color-primary-600);" data-i18n="auth_register_link">Register for free</a>
+            </div>
+          </form>
         </div>
 
-        <!-- Graphic Illustration of Precision Gauge & Drops -->
-        <div style="background: rgba(255, 255, 255, 0.08); border-radius: var(--radius-xl); padding: var(--space-6); border: 1px solid rgba(255, 255, 255, 0.15);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
-            <div style="font-size: var(--font-size-sm); color: #bae6fd;">FAO-56 Irrigation Engine</div>
-            <span class="badge" style="background: #22c55e; color: #ffffff;">Active</span>
+        <!-- Right Side Visual / Illustration Panel (Desktop) -->
+        <div class="auth-side-panel">
+          <div>
+            <div class="auth-brand-badge">
+              <img src="assets/logo.svg" alt="Logo" width="40" height="40">
+              <span style="font-size: var(--font-size-xl); font-weight: 700; color: #ffffff;" data-i18n="brand_name">Crop Hydro-Precision</span>
+            </div>
+            <h2 class="auth-side-heading" data-i18n="auth_side_heading">
+              Science-Driven Water Management
+            </h2>
+            <p class="auth-side-desc" data-i18n="auth_side_desc">
+              Join farmers and agricultural researchers across Tamil Nadu using FAO-56 standards to preserve groundwater and boost crop yield.
+            </p>
           </div>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); text-align: center;">
-            <div style="background: rgba(0,0,0,0.2); padding: var(--space-3); border-radius: var(--radius-md);">
-              <div style="font-size: var(--font-size-xs); color: #94a3b8;">Ra</div>
-              <div style="font-weight: 700; color: #ffffff; font-size: var(--font-size-base);">31.64</div>
-            </div>
-            <div style="background: rgba(0,0,0,0.2); padding: var(--space-3); border-radius: var(--radius-md);">
-              <div style="font-size: var(--font-size-xs); color: #94a3b8;">ET₀</div>
-              <div style="font-weight: 700; color: #38bdf8; font-size: var(--font-size-base);">4.71</div>
-            </div>
-            <div style="background: rgba(0,0,0,0.2); padding: var(--space-3); border-radius: var(--radius-md);">
-              <div style="font-size: var(--font-size-xs); color: #94a3b8;">Kc</div>
-              <div style="font-weight: 700; color: #4ade80; font-size: var(--font-size-base);">0.81</div>
-            </div>
-          </div>
-        </div>
 
-        <div style="font-size: var(--font-size-xs); color: #bae6fd;">
-          Food and Agriculture Organization (FAO-56) Compliant
+          <!-- Middle Glass Feature Widget -->
+          <div class="auth-preview-card">
+            <div class="auth-preview-header">
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                <span style="font-size: var(--font-size-xs); font-weight: 600; color: #bae6fd; text-transform: uppercase; letter-spacing: 0.05em;">FAO-56 Irrigation Engine</span>
+              </div>
+              <span class="auth-live-badge"><span class="pulse-dot"></span> Active</span>
+            </div>
+            <div class="auth-stat-grid">
+              <div class="auth-stat-tile">
+                <span class="stat-lbl">Solar (Ra)</span>
+                <span class="stat-val">31.64</span>
+              </div>
+              <div class="auth-stat-tile">
+                <span class="stat-lbl">ET₀ (mm/d)</span>
+                <span class="stat-val highlight-blue">4.71</span>
+              </div>
+              <div class="auth-stat-tile">
+                <span class="stat-lbl">Stage (Kc)</span>
+                <span class="stat-val highlight-green">0.81</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature Highlights List -->
+          <div class="auth-features-list">
+            <div class="auth-feature-row">
+              <span class="auth-feature-check">✓</span>
+              <span>14 Calibrated TN Crops (Rice, Sugarcane, Cotton...)</span>
+            </div>
+            <div class="auth-feature-row">
+              <span class="auth-feature-check">✓</span>
+              <span>Daily Liter Budget & Precise Pump Hours Schedule</span>
+            </div>
+          </div>
+
+          <div class="auth-footer-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Food and Agriculture Organization (FAO-56) Compliant</span>
+          </div>
         </div>
       </div>
     </div>
@@ -166,6 +202,17 @@
         togglePwdBtn.innerHTML = isPassword
           ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`
           : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+      });
+    }
+
+    // Quick Demo Credentials Fill
+    const demoBtn = document.getElementById("demo-fill-btn");
+    if (demoBtn) {
+      demoBtn.addEventListener("click", () => {
+        emailInput.value = "arun@example.com";
+        pwdInput.value = "Farmer@2026";
+        clearErrors();
+        showToast("Filled demo farmer credentials", "info", 1800);
       });
     }
 

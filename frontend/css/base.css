@@ -20,6 +20,13 @@ html {
 body {
   font-family: var(--font-family);
   background-color: var(--bg-page);
+  background-image: 
+    radial-gradient(at 15% 15%, rgba(22, 163, 74, 0.09) 0px, transparent 55%),
+    radial-gradient(at 85% 10%, rgba(2, 132, 199, 0.11) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(161, 98, 7, 0.05) 0px, transparent 60%),
+    radial-gradient(at 80% 85%, rgba(22, 163, 74, 0.09) 0px, transparent 55%),
+    radial-gradient(at 20% 80%, rgba(2, 132, 199, 0.08) 0px, transparent 50%);
+  background-attachment: fixed;
   color: var(--text-main);
   line-height: var(--line-height-normal);
   font-weight: var(--font-weight-regular);
@@ -29,6 +36,15 @@ body {
   transition: background-color var(--transition-normal), color var(--transition-normal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+[data-theme="dark"] body {
+  background-image: 
+    radial-gradient(at 15% 15%, rgba(22, 163, 74, 0.15) 0px, transparent 55%),
+    radial-gradient(at 85% 10%, rgba(2, 132, 199, 0.18) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(161, 98, 7, 0.08) 0px, transparent 60%),
+    radial-gradient(at 80% 85%, rgba(22, 163, 74, 0.14) 0px, transparent 55%),
+    radial-gradient(at 20% 80%, rgba(2, 132, 199, 0.12) 0px, transparent 50%);
 }
 
 main {
